@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Portfolio</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+
+    <!-- Login Screen -->
+    <div id="login-screen" class="screen">
+        <div class="login-card">
+            <h2>Admin Login</h2>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label>Username</label>
+                    <input type="text" id="username" required>
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" id="password" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Login</button>
+                <p id="login-error" class="error-msg"></p>
+            </form>
+        </div>
+    </div>
+
+    <!-- Dashboard Screen -->
+    <div id="dashboard-screen" class="screen hidden">
+        <nav class="admin-nav">
+            <div class="nav-brand">Admin Portfolio</div>
+            <button id="logoutBtn" class="btn btn-outline">Logout</button>
+        </nav>
+        
+        <div class="dashboard-container">
+            <!-- Sidebar -->
+            <aside class="sidebar">
+                <button class="nav-btn active" data-target="projects-view">Kelola Proyek</button>
+                <button class="nav-btn" data-target="certificates-view">Kelola Sertifikat</button>
+                <button class="nav-btn" data-target="profile-view">Profil & Pengaturan</button>
+                <a href="/" target="_blank" class="nav-link">Lihat Website ↗</a>
+            </aside>
+
+            <!-- Main Content -->
+            <main class="main-content">
+                
+                <!-- Projects View -->
+                <section id="projects-view" class="content-section">
+                    <div class="section-header">
+                        <h2>Daftar Proyek</h2>
+                        <button class="btn btn-primary" onclick="showProjectModal()">+ Tambah Proyek</button>
+                    </div>
+                    <div class="table-responsive">
+                        <table id="projectsTable">
+                            <thead>
+                                <tr>
+                                    <th>Judul</th>
+                                    <th>Tahun</th>
+                                    <th>Tags</th>
+                                    <th>Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Data will be injected here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- Certificates View -->
+                <section id="certificates-view" class="content-section hidden">
+                    <div class="section-header">
+                        <h2>Daftar Sertifikat</h2>
+                        <button class="btn btn-primary" onclick="showCertModal()">+ Tambah Sertifikat</button>
+                    </div>
+                    <div class="table-responsive">
+                        <table id="certificatesTable">
+                            <thead>
+                                <tr>
+                                    <th>Judul</th>
+                                    <th>Penerbit</th>
+                                    <th>Kategori</th>
+                                    <th>Tanggal</th>
+                                    <th>Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Data will be injected here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- Profile View -->
+                <section id="profile-view" class="content-section hidden">
+                    <div class="section-header">
+                        <h2>Profil & Pengaturan</h2>
+                    </div>
+                    <form id="profileForm" style="background: var(--card-bg); padding: 2rem; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+                        <h3>Hero Section</h3>
+                        <div class="form-group">
+                            <label>Judul & Nama (Gunakan &lt;br /&gt; untuk baris baru)</label>
+                            <input type="text" id="profHeroTitle" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Teks Animasi Role (Pisahkan dengan koma)</label>
+                            <input type="text" id="profRoles" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Deskripsi Singkat Hero</label>
+                            <textarea id="profHeroDesc" rows="3" required></textarea>
+                        </div>
+
+                        <h3 style="margin-top:2rem;">Statistik</h3>
+                        <div class="form-group">
+                            <label>Tahun Pengalaman (ex: 5+)</label>
+                            <input type="text" id="profStatYears" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Proyek Selesai (ex: 20+)</label>
+                            <input type="text" id="profStatProjects" required>
+                        </div>
+
+                        <h3 style="margin-top:2rem;">Visi & Misi</h3>
+                        <div class="form-group">
+                            <label>Paragraf Misi</label>
+                            <textarea id="profMission" rows="3" required></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>Paragraf Pendekatan</label>
+                            <textarea id="profApproach" rows="3" required></textarea>
+                        </div>
+
+                        <h3 style="margin-top:2rem;">Kontak & Sosial Media</h3>
+                        <div class="form-group">
+                            <label>Nomor WhatsApp (Mulai dengan 62...)</label>
+                            <input type="text" id="profWa" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Alamat Email</label>
+                            <input type="email" id="profEmail" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Link GitHub</label>
+                            <input type="url" id="profGithub">
+                        </div>
+                        <div class="form-group">
+                            <label>Link LinkedIn</label>
+                            <input type="url" id="profLinkedin">
+                        </div>
+                        <div class="form-group">
+                            <label>Link Instagram</label>
+                            <input type="url" id="profInstagram">
+                        </div>
+                        <div class="form-group">
+                            <label>Link Facebook</label>
+                            <input type="url" id="profFacebook">
+                        </div>
+
+                        <button type="submit" class="btn btn-primary" style="margin-top:1rem; width: 100%;">Simpan Perubahan Profil</button>
+                    </form>
+                </section>
+
+            </main>
+        </div>
+    </div>
+
+    <!-- Modal Project -->
+    <div id="projectModal" class="modal">
+        <div class="modal-content">
+            <h3 id="projectModalTitle">Tambah Proyek</h3>
+            <form id="projectForm">
+                <input type="hidden" id="projectId">
+                <div class="form-group">
+                    <label>Judul Proyek</label>
+                    <input type="text" id="projectTitle" required>
+                </div>
+                <div class="form-group">
+                    <label>Tahun</label>
+                    <input type="text" id="projectYear" required>
+                </div>
+                <div class="form-group">
+                    <label>Tags (pisahkan dengan koma)</label>
+                    <input type="text" id="projectTags" placeholder="React, Node.js, dll" required>
+                </div>
+                <div class="form-group">
+                    <label>Deskripsi Singkat</label>
+                    <textarea id="projectDesc" rows="3" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Demo Link</label>
+                    <input type="url" id="projectDemo">
+                </div>
+                <div class="form-group">
+                    <label>GitHub Link</label>
+                    <input type="url" id="projectGithub">
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-outline" onclick="closeModal('projectModal')">Batal</button>
+                    <button type="submit" class="btn btn-primary">Simpan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal Certificate -->
+    <div id="certModal" class="modal">
+        <div class="modal-content">
+            <h3 id="certModalTitle">Tambah Sertifikat</h3>
+            <form id="certForm">
+                <input type="hidden" id="certId">
+                <div class="form-group">
+                    <label>Judul Sertifikat</label>
+                    <input type="text" id="certTitle" required>
+                </div>
+                <div class="form-group">
+                    <label>Penerbit</label>
+                    <input type="text" id="certIssuer" required>
+                </div>
+                <div class="form-group">
+                    <label>Kategori</label>
+                    <select id="certCategory" required>
+                        <option value="programming">Programming</option>
+                        <option value="design">Design</option>
+                        <option value="data">Data</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Tanggal (ex: Jan 2024)</label>
+                    <input type="text" id="certDate" required>
+                </div>
+                <div class="form-group">
+                    <label>Deskripsi Singkat</label>
+                    <textarea id="certDesc" rows="3" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Link Verifikasi</label>
+                    <input type="url" id="certLink">
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-outline" onclick="closeModal('certModal')">Batal</button>
+                    <button type="submit" class="btn btn-primary">Simpan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="admin.js"></script>
+</body>
+</html>
