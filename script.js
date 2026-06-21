@@ -285,13 +285,13 @@ console.log('%cBuilt with ❤️ using HTML, CSS & Vanilla JS',
 // ==========================================
 const supabaseUrl = 'https://pommiyqbrpuboehojryu.supabase.co';
 const supabaseKey = 'sb_publishable_g9SRDW_5cJ2-aVeItpMtKw_huzMtgaV';
-const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+const supabaseClient = window.supabase.createClient(supabaseUrl, supabaseKey);
 async function fetchPortfolioData() {
     try {
         const [projRes, certRes, profRes] = await Promise.all([
-            supabase.from('projects').select('*').order('created_at', { ascending: false }),
-            supabase.from('certificates').select('*').order('created_at', { ascending: false }),
-            supabase.from('profile').select('*').eq('id', 1).single()
+            supabaseClient.from('projects').select('*').order('created_at', { ascending: false }),
+            supabaseClient.from('certificates').select('*').order('created_at', { ascending: false }),
+            supabaseClient.from('profile').select('*').eq('id', 1).single()
         ]);
         
         const projects = projRes.data || [];

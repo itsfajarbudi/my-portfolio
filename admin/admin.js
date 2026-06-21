@@ -1,6 +1,6 @@
 const supabaseUrl = 'https://pommiyqbrpuboehojryu.supabase.co';
 const supabaseKey = 'sb_publishable_g9SRDW_5cJ2-aVeItpMtKw_huzMtgaV';
-const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+const supabaseClient = window.supabase.createClient(supabaseUrl, supabaseKey);
 
 // DOM Elements
 const loginScreen = document.getElementById('login-screen');
@@ -14,7 +14,7 @@ const views = document.querySelectorAll('.content-section');
 
 // Init
 async function init() {
-    const { data: { session } } = await supabase.auth.getSession();
+    const { data: { session } } = await supabaseClient.auth.getSession();
     if (session) {
         showDashboard();
     } else {
@@ -45,7 +45,7 @@ loginForm.addEventListener('submit', async (e) => {
     const email = document.getElementById('username').value; // Supabase uses email
     const password = document.getElementById('password').value;
 
-    const { data, error } = await supabase.auth.signInWithPassword({
+    const { data, error } = await supabaseClient.auth.signInWithPassword({
         email: email,
         password: password,
     });
@@ -58,7 +58,7 @@ loginForm.addEventListener('submit', async (e) => {
 });
 
 logoutBtn.addEventListener('click', async () => {
-    await supabase.auth.signOut();
+    await supabaseClient.auth.signOut();
     showLogin();
 });
 
@@ -79,7 +79,7 @@ function showDashboard() {
 // PROFILE
 // ======================
 async function loadProfile() {
-    const { data: p, error } = await supabase.from('profile').select('*').eq('id', 1).single();
+    const { data: p, error } = await supabaseClient.from('profile').select('*').eq('id', 1).single();
     if (!p) return;
     
     document.getElementById('profHeroTitle').value = p.hero_title || '';
@@ -115,7 +115,7 @@ document.getElementById('profileForm').addEventListener('submit', async (e) => {
         facebook: document.getElementById('profFacebook').value
     };
 
-    const { error } = await supabase.from('profile').update(body).eq('id', 1);
+    const { error } = await supabaseClient.from('profile').update(body).eq('id', 1);
 
     if (error) {
         alert('Gagal memperbarui profil: ' + error.message);
@@ -130,7 +130,7 @@ document.getElementById('profileForm').addEventListener('submit', async (e) => {
 let projectsData = [];
 
 async function loadProjects() {
-    const { data } = await supabase.from('projects').select('*').order('created_at', { ascending: false });
+    const { data } = await supabaseClient.from('projects').select('*').order('created_at', { ascending: false });
     projectsData = data || [];
     renderProjects();
 }
@@ -188,9 +188,9 @@ document.getElementById('projectForm').addEventListener('submit', async (e) => {
     };
 
     if (id) {
-        await supabase.from('projects').update(body).eq('id', id);
+        await supabaseClient.from('projects').update(body).eq('id', id);
     } else {
-        await supabase.from('projects').insert([body]);
+        await supabaseClient.from('projects').insert([body]);
     }
     closeModal('projectModal');
     loadProjects();
@@ -198,7 +198,7 @@ document.getElementById('projectForm').addEventListener('submit', async (e) => {
 
 async function deleteProject(id) {
     if (confirm('Yakin ingin menghapus proyek ini?')) {
-        await supabase.from('projects').delete().eq('id', id);
+        await supabaseClient.from('projects').delete().eq('id', id);
         loadProjects();
     }
 }
@@ -209,7 +209,7 @@ async function deleteProject(id) {
 let certsData = [];
 
 async function loadCertificates() {
-    const { data } = await supabase.from('certificates').select('*').order('created_at', { ascending: false });
+    const { data } = await supabaseClient.from('certificates').select('*').order('created_at', { ascending: false });
     certsData = data || [];
     renderCertificates();
 }
@@ -267,9 +267,9 @@ document.getElementById('certForm').addEventListener('submit', async (e) => {
     };
 
     if (id) {
-        await supabase.from('certificates').update(body).eq('id', id);
+        await supabaseClient.from('certificates').update(body).eq('id', id);
     } else {
-        await supabase.from('certificates').insert([body]);
+        await supabaseClient.from('certificates').insert([body]);
     }
     closeModal('certModal');
     loadCertificates();
@@ -277,7 +277,7 @@ document.getElementById('certForm').addEventListener('submit', async (e) => {
 
 async function deleteCert(id) {
     if (confirm('Yakin ingin menghapus sertifikat ini?')) {
-        await supabase.from('certificates').delete().eq('id', id);
+        await supabaseClient.from('certificates').delete().eq('id', id);
         loadCertificates();
     }
 }
