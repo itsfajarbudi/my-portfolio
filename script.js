@@ -281,18 +281,22 @@ console.log('%cBuilt with ❤️ using HTML, CSS & Vanilla JS',
   'color:#64748b; font-size:12px;');
 
 // ==========================================
-// 13. DYNAMIC DATA FETCHING
+// 13. DYNAMIC DATA FETCHING (SUPABASE)
 // ==========================================
+const supabaseUrl = 'https://pommiyqbrpuboehojryu.supabase.co';
+const supabaseKey = 'sb_publishable_g9SRDW_5cJ2-aVeItpMtKw_huzMtgaV';
+const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
 async function fetchPortfolioData() {
     try {
         const [projRes, certRes, profRes] = await Promise.all([
-            fetch('/api/projects'),
-            fetch('/api/certificates'),
-            fetch('/api/profile')
+            supabase.from('projects').select('*').order('created_at', { ascending: false }),
+            supabase.from('certificates').select('*').order('created_at', { ascending: false }),
+            supabase.from('profile').select('*').eq('id', 1).single()
         ]);
-        const projects = await projRes.json();
-        const certs = await certRes.json();
-        const profile = await profRes.json();
+        
+        const projects = projRes.data || [];
+        const certs = certRes.data || [];
+        const profile = profRes.data || null;
 
         // Render Profile
         if (profile) {

@@ -1,4 +1,6 @@
-const API_URL = '/api';
+const supabaseUrl = 'https://pommiyqbrpuboehojryu.supabase.co';
+const supabaseKey = 'sb_publishable_g9SRDW_5cJ2-aVeItpMtKw_huzMtgaV';
+const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
 
 // DOM Elements
 const loginScreen = document.getElementById('login-screen');
@@ -10,12 +12,10 @@ const logoutBtn = document.getElementById('logoutBtn');
 const navBtns = document.querySelectorAll('.nav-btn');
 const views = document.querySelectorAll('.content-section');
 
-// Authentication state
-let token = localStorage.getItem('adminToken');
-
 // Init
-function init() {
-    if (token) {
+async function init() {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (session) {
         showDashboard();
     } else {
         showLogin();
@@ -42,32 +42,23 @@ navBtns.forEach(btn => {
 // Login
 loginForm.addEventListener('submit', async (e) => {
     e.preventDefault();
-    const username = document.getElementById('username').value;
+    const email = document.getElementById('username').value; // Supabase uses email
     const password = document.getElementById('password').value;
 
-    try {
-        const res = await fetch(`${API_URL}/login`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ username, password })
-        });
-        const data = await res.json();
-        
-        if (res.ok) {
-            token = data.token;
-            localStorage.setItem('adminToken', token);
-            showDashboard();
-        } else {
-            errorMsg.textContent = data.message;
-        }
-    } catch (err) {
-        errorMsg.textContent = 'Gagal menghubungi server.';
+    const { data, error } = await supabase.auth.signInWithPassword({
+        email: email,
+        password: password,
+    });
+
+    if (error) {
+        errorMsg.textContent = 'Login gagal: Periksa kembali email dan password Anda.';
+    } else {
+        showDashboard();
     }
 });
 
-logoutBtn.addEventListener('click', () => {
-    token = null;
-    localStorage.removeItem('adminToken');
+logoutBtn.addEventListener('click', async () => {
+    await supabase.auth.signOut();
     showLogin();
 });
 
@@ -84,30 +75,12 @@ function showDashboard() {
     loadProfile();
 }
 
-// API Helper
-async function apiCall(endpoint, method = 'GET', body = null) {
-    const headers = { 'Authorization': `Bearer ${token}` };
-    if (body) headers['Content-Type'] = 'application/json';
-    
-    const res = await fetch(`${API_URL}${endpoint}`, {
-        method,
-        headers,
-        body: body ? JSON.stringify(body) : null
-    });
-    
-    if (res.status === 401 || res.status === 403) {
-        logoutBtn.click();
-        throw new Error('Unauthorized');
-    }
-    return res;
-}
-
 // ======================
 // PROFILE
 // ======================
 async function loadProfile() {
-    const res = await fetch(`${API_URL}/profile`);
-    const p = await res.json();
+    const { data: p, error } = await supabase.from('profile').select('*').eq('id', 1).single();
+    if (!p) return;
     
     document.getElementById('profHeroTitle').value = p.hero_title || '';
     document.getElementById('profRoles').value = p.roles || '';
@@ -142,11 +115,12 @@ document.getElementById('profileForm').addEventListener('submit', async (e) => {
         facebook: document.getElementById('profFacebook').value
     };
 
-    try {
-        await apiCall('/profile', 'PUT', body);
+    const { error } = await supabase.from('profile').update(body).eq('id', 1);
+
+    if (error) {
+        alert('Gagal memperbarui profil: ' + error.message);
+    } else {
         alert('Profil berhasil diperbarui!');
-    } catch (err) {
-        alert('Gagal memperbarui profil.');
     }
 });
 
@@ -156,8 +130,8 @@ document.getElementById('profileForm').addEventListener('submit', async (e) => {
 let projectsData = [];
 
 async function loadProjects() {
-    const res = await fetch(`${API_URL}/projects`);
-    projectsData = await res.json();
+    const { data } = await supabase.from('projects').select('*').order('created_at', { ascending: false });
+    projectsData = data || [];
     renderProjects();
 }
 
@@ -214,9 +188,9 @@ document.getElementById('projectForm').addEventListener('submit', async (e) => {
     };
 
     if (id) {
-        await apiCall(`/projects/${id}`, 'PUT', body);
+        await supabase.from('projects').update(body).eq('id', id);
     } else {
-        await apiCall('/projects', 'POST', body);
+        await supabase.from('projects').insert([body]);
     }
     closeModal('projectModal');
     loadProjects();
@@ -224,7 +198,7 @@ document.getElementById('projectForm').addEventListener('submit', async (e) => {
 
 async function deleteProject(id) {
     if (confirm('Yakin ingin menghapus proyek ini?')) {
-        await apiCall(`/projects/${id}`, 'DELETE');
+        await supabase.from('projects').delete().eq('id', id);
         loadProjects();
     }
 }
@@ -235,8 +209,8 @@ async function deleteProject(id) {
 let certsData = [];
 
 async function loadCertificates() {
-    const res = await fetch(`${API_URL}/certificates`);
-    certsData = await res.json();
+    const { data } = await supabase.from('certificates').select('*').order('created_at', { ascending: false });
+    certsData = data || [];
     renderCertificates();
 }
 
@@ -293,9 +267,9 @@ document.getElementById('certForm').addEventListener('submit', async (e) => {
     };
 
     if (id) {
-        await apiCall(`/certificates/${id}`, 'PUT', body);
+        await supabase.from('certificates').update(body).eq('id', id);
     } else {
-        await apiCall('/certificates', 'POST', body);
+        await supabase.from('certificates').insert([body]);
     }
     closeModal('certModal');
     loadCertificates();
@@ -303,7 +277,7 @@ document.getElementById('certForm').addEventListener('submit', async (e) => {
 
 async function deleteCert(id) {
     if (confirm('Yakin ingin menghapus sertifikat ini?')) {
-        await apiCall(`/certificates/${id}`, 'DELETE');
+        await supabase.from('certificates').delete().eq('id', id);
         loadCertificates();
     }
 }
@@ -316,4 +290,5 @@ function closeModal(id) {
 function editProject(id) { showProjectModal(id); }
 function editCert(id) { showCertModal(id); }
 
+// Initialize
 init();
