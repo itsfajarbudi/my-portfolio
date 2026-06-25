@@ -460,6 +460,15 @@ const chatbotSend = document.getElementById('chatbotSend');
 const chatbotMessages = document.getElementById('chatbotMessages');
 
 if (chatbotLauncher && chatbotWindow) {
+  // KONFIGURASI 9ROUTER API
+  // Silakan ganti URL dan API_KEY di bawah ini dengan milik 9Router Anda.
+  const NINOROUTER_API_URL = "http://localhost:8080/v1/chat/completions"; 
+  const NINOROUTER_API_KEY = "YOUR_9ROUTER_API_KEY_HERE";
+
+  let conversationHistory = [
+    { role: "system", content: "Anda adalah asisten AI untuk Fajar Budi Raharjo. Jawablah pertanyaan seputar portofolionya dengan ramah, profesional, dan menggunakan bahasa Indonesia." }
+  ];
+
   chatbotLauncher.addEventListener('click', () => {
     chatbotWindow.classList.add('active');
     setTimeout(() => chatbotInput.focus(), 300);
@@ -492,24 +501,55 @@ if (chatbotLauncher && chatbotWindow) {
     return msgDiv;
   };
 
-  const handleSend = () => {
+  const handleSend = async () => {
     const text = chatbotInput.value.trim();
     if (!text) return;
     
     appendMessage(text, 'user');
+    conversationHistory.push({ role: "user", content: text });
+
     chatbotInput.value = '';
     chatbotInput.disabled = true;
     chatbotSend.disabled = true;
 
     const typingMsg = showTypingIndicator();
 
-    setTimeout(() => {
+    try {
+      const response = await fetch(NINOROUTER_API_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${NINOROUTER_API_KEY}`
+        },
+        body: JSON.stringify({
+          model: "gpt-3.5-turbo", // Atau model spesifik di 9Router Anda
+          messages: conversationHistory,
+          temperature: 0.7
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      const aiReply = data.choices[0].message.content;
+      
       typingMsg.remove();
-      appendMessage('Ini adalah pesan simulasi otomatis. Terima kasih telah menghubungi saya melalui asisten AI ini!', 'ai');
+      appendMessage(aiReply, 'ai');
+      conversationHistory.push({ role: "assistant", content: aiReply });
+
+    } catch (error) {
+      console.error("Chatbot API Error:", error);
+      typingMsg.remove();
+      appendMessage('Maaf, saya sedang tidak bisa terhubung ke server 9Router saat ini. Silakan periksa konfigurasi API Anda.', 'ai');
+      // Hapus pesan user terakhir dari history agar tidak menumpuk error
+      conversationHistory.pop(); 
+    } finally {
       chatbotInput.disabled = false;
       chatbotSend.disabled = false;
       chatbotInput.focus();
-    }, 2000);
+    }
   };
 
   chatbotSend.addEventListener('click', handleSend);
