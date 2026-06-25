@@ -462,7 +462,7 @@ const chatbotMessages = document.getElementById('chatbotMessages');
 if (chatbotLauncher && chatbotWindow) {
   // KONFIGURASI 9ROUTER API
   // Silakan ganti URL dan API_KEY di bawah ini dengan milik 9Router Anda.
-  const NINOROUTER_API_URL = "http://localhost:8080/v1/chat/completions"; 
+  const NINOROUTER_API_URL = "https://9-router-test-to-chatbot.vercel.app/v1/chat/completions"; 
   const NINOROUTER_API_KEY = "YOUR_9ROUTER_API_KEY_HERE";
 
   let conversationHistory = [
