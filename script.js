@@ -461,9 +461,11 @@ const chatbotMessages = document.getElementById('chatbotMessages');
 
 if (chatbotLauncher && chatbotWindow) {
   // KONFIGURASI 9ROUTER API
-  // Silakan ganti URL dan API_KEY di bawah ini dengan milik 9Router Anda.
-  const NINOROUTER_API_URL = "https://9-router-test-to-chatbot.vercel.app/v1/chat/completions"; 
-  const NINOROUTER_API_KEY = "YOUR_9ROUTER_API_KEY_HERE";
+  // Ganti URL di bawah ini dengan URL Vercel 9Router Anda.
+  // Contoh: "https://9router-backend-xxx.vercel.app/v1/chat/completions"
+  // API Key tidak wajib — server.js tidak memvalidasi auth.
+  const NINOROUTER_API_URL = "https://9-router-test-to-chatbot.vercel.app/v1/chat/completions";
+  const NINOROUTER_API_KEY = "portofolio-fajar"; // Tidak divalidasi server, bisa diisi apa saja
 
   let conversationHistory = [
     { role: "system", content: "Anda adalah asisten AI untuk Fajar Budi Raharjo. Jawablah pertanyaan seputar portofolionya dengan ramah, profesional, dan menggunakan bahasa Indonesia." }
