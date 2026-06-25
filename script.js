@@ -448,3 +448,72 @@ async function fetchPortfolioData() {
 }
 
 fetchPortfolioData();
+
+// ==========================================
+// 14. CHATBOT LOGIC
+// ==========================================
+const chatbotLauncher = document.getElementById('chatbotLauncher');
+const chatbotWindow = document.getElementById('chatbotWindow');
+const chatbotClose = document.getElementById('chatbotClose');
+const chatbotInput = document.getElementById('chatbotInput');
+const chatbotSend = document.getElementById('chatbotSend');
+const chatbotMessages = document.getElementById('chatbotMessages');
+
+if (chatbotLauncher && chatbotWindow) {
+  chatbotLauncher.addEventListener('click', () => {
+    chatbotWindow.classList.add('active');
+    setTimeout(() => chatbotInput.focus(), 300);
+  });
+
+  chatbotClose.addEventListener('click', () => {
+    chatbotWindow.classList.remove('active');
+  });
+
+  const appendMessage = (text, sender) => {
+    const msgDiv = document.createElement('div');
+    msgDiv.className = `chat-msg ${sender}`;
+    const bubble = document.createElement('div');
+    bubble.className = 'chat-bubble';
+    bubble.textContent = text;
+    msgDiv.appendChild(bubble);
+    chatbotMessages.appendChild(msgDiv);
+    chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
+  };
+
+  const showTypingIndicator = () => {
+    const msgDiv = document.createElement('div');
+    msgDiv.className = `chat-msg ai typing-indicator-msg`;
+    const bubble = document.createElement('div');
+    bubble.className = 'chat-bubble chat-typing';
+    bubble.innerHTML = '<span></span><span></span><span></span>';
+    msgDiv.appendChild(bubble);
+    chatbotMessages.appendChild(msgDiv);
+    chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
+    return msgDiv;
+  };
+
+  const handleSend = () => {
+    const text = chatbotInput.value.trim();
+    if (!text) return;
+    
+    appendMessage(text, 'user');
+    chatbotInput.value = '';
+    chatbotInput.disabled = true;
+    chatbotSend.disabled = true;
+
+    const typingMsg = showTypingIndicator();
+
+    setTimeout(() => {
+      typingMsg.remove();
+      appendMessage('Ini adalah pesan simulasi otomatis. Terima kasih telah menghubungi saya melalui asisten AI ini!', 'ai');
+      chatbotInput.disabled = false;
+      chatbotSend.disabled = false;
+      chatbotInput.focus();
+    }, 2000);
+  };
+
+  chatbotSend.addEventListener('click', handleSend);
+  chatbotInput.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') handleSend();
+  });
+}
