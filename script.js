@@ -45,6 +45,7 @@ CARA MENJAWAB: Jawaban harus LENGKAP, TERSTRUKTUR, gunakan list jika relevan, ak
     phOffer.style.cssText = 'opacity:0;transform:translateY(-20px) scale(0.97);transition:all 0.4s ease;';
     setTimeout(() => {
       phOffer.style.display = 'none';
+      phChat.classList.remove('hidden'); // Fix: remove the hidden class
       phChat.style.display = 'flex';
       phChat.style.cssText = 'display:flex;opacity:0;transform:translateY(20px);transition:all 0.45s cubic-bezier(0.16,1,0.3,1);';
       requestAnimationFrame(() => requestAnimationFrame(() => {
