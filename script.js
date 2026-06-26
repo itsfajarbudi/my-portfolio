@@ -6,6 +6,128 @@
 'use strict';
 
 // ==========================================
+// 0. AI GATEWAY OVERLAY
+// ==========================================
+(function() {
+  const GW_API_URL = "https://9-router-test-to-chatbot.vercel.app/v1/chat/completions";
+  const GW_API_KEY = "portofolio-fajar";
+  const SYSTEM_PROMPT = `Anda adalah asisten AI resmi untuk portofolio Fajar Budi Raharjo. Jawab HANYA dalam Bahasa Indonesia yang baku, ramah, dan profesional.
+
+PROFIL FAJAR: Nama: Fajar Budi Raharjo | Lokasi: Jakarta | Status: Tersedia untuk proyek baru | WA: +62 813-8305-092 | Email: itsfajarbudi@gmail.com | GitHub: github.com/itsfajarbudi
+
+KEAHLIAN: (1) DevOps & Cloud: Docker, Kubernetes, CI/CD, AWS, Linux/Windows Server. (2) Networking: Cisco, MikroTik, Firewall, VPN. (3) Full-Stack: Node.js, Python, React, HTML/CSS, MySQL, Supabase. (4) IoT & Drone & Otomatisasi.
+
+PENGALAMAN: 5+ tahun, 20+ proyek selesai. Pendekatan end-to-end development.
+
+CARA MENJAWAB: Jawaban harus LENGKAP, TERSTRUKTUR, gunakan list jika relevan, akhiri dengan pertanyaan lanjutan.`;
+
+  let history = [{ role: "system", content: SYSTEM_PROMPT }];
+  let waiting = false;
+
+  function gw(id) { return document.getElementById(id); }
+
+  const overlay    = gw('gwOverlay');
+  if (!overlay) return;
+
+  // Prevent background scrolling while overlay is open
+  document.body.classList.add('gw-noscroll');
+
+  const phOffer    = gw('phaseOffer');
+  const phChat     = gw('phaseChat');
+  const msgs       = gw('gwMessages');
+  const inp        = gw('gwInput');
+  const sendBtn    = gw('gwSend');
+  const chips      = gw('gwSuggestions');
+
+  function dismiss() {
+    overlay.classList.add('gw-dismissed');
+    document.body.classList.remove('gw-noscroll');
+    setTimeout(() => { overlay.style.display = 'none'; }, 700);
+  }
+
+  function goChat() {
+    phOffer.style.cssText = 'opacity:0;transform:translateY(-20px) scale(0.97);transition:all 0.4s ease;';
+    setTimeout(() => {
+      phOffer.style.display = 'none';
+      phChat.classList.remove('hidden'); // Fix: remove the hidden class
+      phChat.style.display = 'flex';
+      phChat.style.cssText = 'display:flex;opacity:0;transform:translateY(20px);transition:all 0.45s cubic-bezier(0.16,1,0.3,1);';
+      requestAnimationFrame(() => requestAnimationFrame(() => {
+        phChat.style.opacity = '1';
+        phChat.style.transform = 'translateY(0)';
+      }));
+      setTimeout(() => addAI("Halo! Selamat datang 👋\n\nSaya adalah **AI Assistant** yang siap menjawab pertanyaan Anda seputar Fajar Budi Raharjo — seorang *DevOps & Full-Stack Engineer* dari Jakarta.\n\nAnda bisa bertanya tentang:\n- Keahlian dan teknologi yang dikuasai Fajar\n- Proyek-proyek yang telah diselesaikan\n- Sertifikat dan pencapaian profesional\n- Cara menghubungi Fajar untuk kolaborasi\n\nApa yang ingin Anda ketahui lebih dulu?", true), 600);
+      setTimeout(() => inp && inp.focus(), 800);
+    }, 360);
+  }
+
+  function esc(t) { const d=document.createElement('div'); d.appendChild(document.createTextNode(t)); return d.innerHTML; }
+
+  function fmt(t) {
+    let h = esc(t);
+    h = h.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+    h = h.replace(/\*(.+?)\*/g, '<em>$1</em>');
+    let inList = false;
+    const lines = h.split('\n').map(l => {
+      if (l.trim().startsWith('- ')) { const c=l.trim().slice(2); if(!inList){inList=true;return`<ul><li>${c}</li>`;} return`<li>${c}</li>`; }
+      if (inList) { inList=false; return`</ul>${l?`<p>${l}</p>`:''}`; }
+      return l ? `<p>${l}</p>` : '';
+    });
+    if (inList) lines.push('</ul>');
+    return lines.join('');
+  }
+
+  function addAI(text, skip) {
+    const d=document.createElement('div'); d.className='gw-msg ai';
+    d.innerHTML=`<div class="gw-msg-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 8V4H8"/><rect x="4" y="8" width="16" height="12" rx="2"/><path d="M2 14h2M20 14h2M15 13v2M9 13v2"/></svg></div><div class="gw-bubble">${fmt(text)}</div>`;
+    msgs.appendChild(d); msgs.scrollTop=msgs.scrollHeight;
+    if (!skip) history.push({role:"assistant",content:text});
+  }
+
+  function addUser(text) {
+    const d=document.createElement('div'); d.className='gw-msg user';
+    d.innerHTML=`<div class="gw-bubble">${esc(text)}</div><div class="gw-msg-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>`;
+    msgs.appendChild(d); msgs.scrollTop=msgs.scrollHeight;
+  }
+
+  function showTyping() {
+    const d=document.createElement('div'); d.className='gw-msg ai'; d.id='gwTypingMsg';
+    d.innerHTML=`<div class="gw-msg-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 8V4H8"/><rect x="4" y="8" width="16" height="12" rx="2"/><path d="M2 14h2M20 14h2M15 13v2M9 13v2"/></svg></div><div class="gw-bubble gw-typing-bubble"><div class="gw-typing-dot"></div><div class="gw-typing-dot"></div><div class="gw-typing-dot"></div></div>`;
+    msgs.appendChild(d); msgs.scrollTop=msgs.scrollHeight; return d;
+  }
+
+  async function send() {
+    const text = inp ? inp.value.trim() : '';
+    if (!text || waiting) return;
+    if (chips && chips.children.length > 0) { chips.style.cssText='opacity:0;max-height:0;overflow:hidden;transition:all 0.3s ease;'; setTimeout(()=>{chips.innerHTML=''},350); }
+    addUser(text);
+    history.push({role:"user",content:text});
+    inp.value=''; inp.disabled=true; sendBtn.disabled=true; waiting=true;
+    const t=showTyping();
+    try {
+      const r = await fetch(GW_API_URL,{method:"POST",headers:{"Content-Type":"application/json","Authorization":`Bearer ${GW_API_KEY}`},body:JSON.stringify({model:"gpt-3.5-turbo",messages:history,temperature:0.72,max_tokens:1024})});
+      if(!r.ok) throw new Error(`HTTP ${r.status}`);
+      const data=await r.json();
+      const reply=data.choices?.[0]?.message?.content||"Maaf, tidak ada respons.";
+      t.remove(); addAI(reply);
+    } catch(e) {
+      console.error("GW Error:",e); t.remove();
+      addAI("Maaf, saya sedang mengalami kendala koneksi ke server AI. 🔌\n\nSilakan coba lagi, atau klik *Lihat Portofolio* untuk langsung menjelajahi portofolio Fajar.");
+      history.pop();
+    } finally { inp.disabled=false; sendBtn.disabled=false; waiting=false; inp.focus(); }
+  }
+
+  gw('btnChooseChat').addEventListener('click', goChat);
+  gw('btnGoPorto').addEventListener('click', dismiss);
+  gw('btnGoPortoFromChat').addEventListener('click', dismiss);
+  sendBtn.addEventListener('click', send);
+  inp.addEventListener('keydown', e => { if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();send();} });
+  chips.addEventListener('click', e => { const c=e.target.closest('.gw-chip'); if(c){inp.value=c.dataset.msg;send();} });
+
+})();
+
+
+// ==========================================
 // 1. NAVBAR — scroll behavior & mobile menu
 // ==========================================
 const navbar   = document.getElementById('navbar');
@@ -47,7 +169,7 @@ function updateActiveNav() {
 // ==========================================
 // 2. TYPING EFFECT — hero role text
 // ==========================================
-const roles = [
+let roles = [
   'Web Developer',
   'UI/UX Enthusiast',
   'Python Programmer',
@@ -461,7 +583,6 @@ const chatbotMessages = document.getElementById('chatbotMessages');
 
 if (chatbotLauncher && chatbotWindow) {
   // KONFIGURASI 9ROUTER API
-  // Silakan ganti URL dan API_KEY di bawah ini dengan milik 9Router Anda.
   const NINOROUTER_API_URL = "https://9-router-test-to-chatbot.vercel.app/v1/chat/completions"; 
   const NINOROUTER_API_KEY = "portofolio-fajar";
 

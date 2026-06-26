@@ -16,6 +16,123 @@
 
 <body>
 
+  <!-- ========== AI GATEWAY OVERLAY ========== -->
+  <div class="gw-overlay" id="gwOverlay">
+
+    <!-- Animated Background -->
+    <div class="gw-bg">
+      <div class="gw-orb gw-orb-1"></div>
+      <div class="gw-orb gw-orb-2"></div>
+      <div class="gw-orb gw-orb-3"></div>
+      <div class="gw-grid"></div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="gw-main" id="gwMain">
+
+      <!-- PHASE 1: OFFER -->
+      <section class="gw-phase gw-offer" id="phaseOffer">
+        <div class="gw-card">
+          <div class="gw-avatar-ring">
+            <div class="gw-avatar">
+              <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                <path d="M12 8V4H8"/><rect x="4" y="8" width="16" height="12" rx="2"/>
+                <path d="M2 14h2M20 14h2M15 13v2M9 13v2"/>
+              </svg>
+            </div>
+            <div class="gw-avatar-pulse"></div>
+            <div class="gw-status-dot"></div>
+          </div>
+          <div class="gw-header">
+            <div class="gw-badge"><span class="gw-badge-dot"></span>AI Online — Powered by 9Router</div>
+            <h1 class="gw-title">Halo, Saya <span class="gw-highlight">AI Assistant</span><br/>Fajar Budi Raharjo</h1>
+            <p class="gw-subtitle">Selamat datang! Saya siap membantu Anda mengenal Fajar lebih dalam — mulai dari keahlian, proyek, hingga pengalaman profesionalnya. Atau, Anda bisa langsung menjelajahi portofolionya.</p>
+          </div>
+          <div class="gw-offer-cards">
+            <button class="gw-choice gw-choice-ai" id="btnChooseChat" aria-label="Bicara dengan AI">
+              <div class="gw-choice-icon">
+                <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                </svg>
+              </div>
+              <div class="gw-choice-body">
+                <span class="gw-choice-title">Bicara dengan AI</span>
+                <span class="gw-choice-desc">Tanya apa saja seputar Fajar — pengalaman, keahlian, proyek, dan lainnya.</span>
+              </div>
+              <div class="gw-choice-arrow">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+              </div>
+            </button>
+            <button class="gw-choice gw-choice-porto" id="btnGoPorto" aria-label="Langsung ke Portofolio">
+              <div class="gw-choice-icon">
+                <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/>
+                </svg>
+              </div>
+              <div class="gw-choice-body">
+                <span class="gw-choice-title">Lihat Portofolio</span>
+                <span class="gw-choice-desc">Jelajahi proyek, sertifikat, dan pencapaian Fajar secara langsung dan lengkap.</span>
+              </div>
+              <div class="gw-choice-arrow">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+              </div>
+            </button>
+          </div>
+          <p class="gw-footer-hint">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+            Setelah bicara dengan AI, Anda tetap bisa menjelajahi portofolio kapan saja.
+          </p>
+        </div>
+      </section>
+
+      <!-- PHASE 2: CHAT -->
+      <section class="gw-phase gw-chat-phase hidden" id="phaseChat">
+        <div class="gw-chat-container">
+          <div class="gw-chat-header">
+            <div class="gw-chat-header-left">
+              <div class="gw-chat-avatar">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M12 8V4H8"/><rect x="4" y="8" width="16" height="12" rx="2"/>
+                  <path d="M2 14h2M20 14h2M15 13v2M9 13v2"/>
+                </svg>
+              </div>
+              <div class="gw-chat-header-info">
+                <span class="gw-chat-name">AI Assistant Fajar</span>
+                <span class="gw-chat-status"><span class="gw-chat-dot"></span>Online</span>
+              </div>
+            </div>
+            <button class="gw-btn-porto" id="btnGoPortoFromChat" title="Tutup dan Lihat Portofolio">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/>
+              </svg>
+              Lihat Portofolio
+            </button>
+          </div>
+          <div class="gw-messages" id="gwMessages"></div>
+          <div class="gw-suggestions" id="gwSuggestions">
+            <button class="gw-chip" data-msg="Ceritakan tentang keahlian utama Fajar">🛠️ Keahlian utama</button>
+            <button class="gw-chip" data-msg="Proyek apa saja yang pernah dikerjakan Fajar?">📦 Proyek terbaru</button>
+            <button class="gw-chip" data-msg="Sertifikat dan pencapaian apa yang dimiliki Fajar?">🏆 Sertifikat</button>
+            <button class="gw-chip" data-msg="Bagaimana cara menghubungi Fajar untuk kolaborasi?">💼 Kolaborasi</button>
+          </div>
+          <div class="gw-input-area">
+            <div class="gw-input-wrap">
+              <input type="text" id="gwInput" class="gw-input" placeholder="Tanyakan sesuatu tentang Fajar…" autocomplete="off" maxlength="500"/>
+              <button class="gw-send" id="gwSend" aria-label="Kirim pesan">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                  <line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/>
+                </svg>
+              </button>
+            </div>
+            <p class="gw-input-hint">Tekan Enter untuk mengirim • Jawaban AI bisa memakan waktu beberapa detik</p>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </div>
+  <!-- ========== END AI GATEWAY OVERLAY ========== -->
+
   <!-- ========== NAVBAR ========== -->
   <nav class="navbar" id="navbar">
     <div class="nav-container">
