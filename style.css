@@ -2177,7 +2177,8 @@ body.gw-noscroll {
    ============================================= */
 @media (max-width: 768px) {
   .gw-main { padding: 16px; align-items: center; height: 100dvh; }
-  .gw-card { padding: 24px 20px; border-radius: 24px; margin: 0; width: 100%; max-height: 95dvh; overflow-y: auto; }
+  .gw-card { padding: 24px 20px; border-radius: 24px; margin: 0; width: 100%; max-height: 95dvh; overflow-y: auto; scrollbar-width: none; }
+  .gw-card::-webkit-scrollbar { display: none; }
   .gw-title { font-size: 1.4rem; }
   .gw-subtitle { font-size: 0.85rem; margin-bottom: 12px; }
   .gw-choice { padding: 12px 16px; gap: 12px; }
@@ -2186,7 +2187,8 @@ body.gw-noscroll {
   .gw-choice-desc { font-size: 0.75rem; }
   .gw-chat-phase { padding: 0; height: 100dvh; max-height: 100dvh; margin: 0; width: 100%; }
   .gw-chat-container { border-radius: 0; border: none; height: 100%; box-shadow: none; }
-  .gw-messages { padding: 16px 14px 8px; }
+  .gw-messages { padding: 16px 14px 8px; scrollbar-width: none; }
+  .gw-messages::-webkit-scrollbar { display: none; }
   .gw-suggestions { padding: 6px 14px 10px; gap: 6px; }
   .gw-input-area { padding: 10px 14px 16px; }
   .gw-bubble { max-width: 90%; font-size: 0.85rem; padding: 12px 16px; }
