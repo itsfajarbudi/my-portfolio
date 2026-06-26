@@ -1524,11 +1524,22 @@ img { max-width: 100%; display: block; }
 /* =============================================
    ANIMATED BACKGROUND
    ============================================= */
+body.gw-noscroll {
+  overflow: hidden !important;
+  height: 100vh !important;
+  height: 100dvh !important;
+}
+
 .gw-overlay {
   position: fixed;
   inset: 0;
+  width: 100%;
+  height: 100vh;
+  height: 100dvh;
   z-index: 99999;
-  overflow: hidden;
+  background: var(--gw-bg);
+  overflow-y: auto;
+  overflow-x: hidden;
   transition: opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.6s ease;
 }
 .gw-overlay.gw-dismissed {
@@ -1593,6 +1604,7 @@ img { max-width: 100%; display: block; }
   position: relative;
   z-index: 1;
   min-height: 100vh;
+  min-height: 100dvh;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -2160,25 +2172,34 @@ img { max-width: 100%; display: block; }
    RESPONSIVE
    ============================================= */
 @media (max-width: 768px) {
-  .gw-main { padding: 16px; align-items: flex-start; padding-top: 32px; }
-  .gw-card { padding: 36px 24px; }
-  .gw-title { font-size: 1.6rem; }
-  .gw-choice { padding: 16px; gap: 14px; }
+  .gw-main { padding: 20px 16px; align-items: flex-start; padding-top: max(40px, 8vh); min-height: 100dvh; }
+  .gw-card { padding: 32px 20px; border-radius: 24px; margin-bottom: 20px; }
+  .gw-title { font-size: 1.5rem; }
+  .gw-subtitle { font-size: 0.9rem; margin-bottom: 10px; }
+  .gw-choice { padding: 14px 16px; gap: 12px; }
   .gw-choice-icon { width: 44px; height: 44px; border-radius: 12px; }
   .gw-choice-title { font-size: 0.95rem; }
-  .gw-chat-phase { padding: 8px 0; max-height: 100vh; height: 100dvh; }
-  .gw-messages { padding: 16px 16px 8px; }
-  .gw-suggestions { padding: 6px 16px 10px; }
+  .gw-choice-desc { font-size: 0.78rem; }
+  .gw-chat-phase { padding: 8px 0; max-height: 100vh; height: 100dvh; margin: 0 auto; width: 100%; }
+  .gw-chat-container { border-radius: 20px; box-shadow: 0 16px 40px rgba(0,0,0,0.5); border: 1px solid rgba(59, 130, 246, 0.3); }
+  .gw-messages { padding: 16px 14px 8px; }
+  .gw-suggestions { padding: 6px 14px 10px; gap: 6px; }
   .gw-input-area { padding: 10px 14px 16px; }
-  .gw-bubble { max-width: 88%; font-size: 0.88rem; }
+  .gw-bubble { max-width: 90%; font-size: 0.88rem; padding: 12px 16px; }
+  .gw-btn-porto { padding: 8px 14px; }
   .gw-btn-porto span { display: none; }
-  .gw-chat-header { padding: 14px 16px; }
-  .gw-suggestions { gap: 6px; }
+  .gw-chat-header { padding: 12px 16px; }
   .gw-chip { font-size: 0.73rem; padding: 6px 11px; }
 }
 
 @media (max-width: 480px) {
-  .gw-card { border-radius: 20px; padding: 28px 20px; }
+  .gw-main { padding: 12px; }
+  .gw-card { border-radius: 20px; padding: 24px 16px; }
+  .gw-title { font-size: 1.35rem; }
+  .gw-avatar-ring { width: 72px; height: 72px; margin-bottom: 24px; }
+  .gw-avatar { width: 72px; height: 72px; }
   .gw-chat-container { border-radius: 16px; }
+  .gw-choice { padding: 12px 14px; gap: 10px; }
+  .gw-choice-icon { width: 40px; height: 40px; }
 }
 

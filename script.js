@@ -29,6 +29,9 @@ CARA MENJAWAB: Jawaban harus LENGKAP, TERSTRUKTUR, gunakan list jika relevan, ak
   const overlay    = gw('gwOverlay');
   if (!overlay) return;
 
+  // Prevent background scrolling while overlay is open
+  document.body.classList.add('gw-noscroll');
+
   const phOffer    = gw('phaseOffer');
   const phChat     = gw('phaseChat');
   const msgs       = gw('gwMessages');
@@ -38,6 +41,7 @@ CARA MENJAWAB: Jawaban harus LENGKAP, TERSTRUKTUR, gunakan list jika relevan, ak
 
   function dismiss() {
     overlay.classList.add('gw-dismissed');
+    document.body.classList.remove('gw-noscroll');
     setTimeout(() => { overlay.style.display = 'none'; }, 700);
   }
 
