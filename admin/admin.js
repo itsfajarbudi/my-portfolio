@@ -166,6 +166,7 @@ function showProjectModal(id = null) {
             document.getElementById('projectYear').value = p.year;
             document.getElementById('projectTags').value = p.tags;
             document.getElementById('projectDesc').value = p.description;
+            document.getElementById('projectImage').value = p.image_url || '';
             document.getElementById('projectDemo').value = p.demo_link || '';
             document.getElementById('projectGithub').value = p.github_link || '';
             document.getElementById('projectModalTitle').textContent = 'Edit Proyek';
@@ -182,7 +183,7 @@ document.getElementById('projectForm').addEventListener('submit', async (e) => {
         year: document.getElementById('projectYear').value,
         tags: document.getElementById('projectTags').value,
         description: document.getElementById('projectDesc').value,
-        image_url: '', // simplify for now
+        image_url: document.getElementById('projectImage').value,
         demo_link: document.getElementById('projectDemo').value,
         github_link: document.getElementById('projectGithub').value
     };

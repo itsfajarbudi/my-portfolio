@@ -473,11 +473,7 @@ async function fetchPortfolioData() {
                     <div class="project-card reveal">
                       <div class="project-img-wrap">
                         <div class="project-img-placeholder">
-                          ${p.image_url ? `<img src="${p.image_url}" alt="${p.title}" style="width:100%;height:100%;object-fit:cover;">` : `<svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="3" width="20" height="14" rx="2" /><path d="M8 21h8M12 17v4" /></svg>`}
-                        </div>
-                        <div class="project-overlay">
-                          ${p.demo_link && p.demo_link !== '#' ? `<a href="${p.demo_link}" target="_blank" class="project-link-btn">Live Demo</a>` : ''}
-                          ${p.github_link && p.github_link !== '#' ? `<a href="${p.github_link}" target="_blank" class="project-link-btn outline">Source Code</a>` : ''}
+                          ${p.image_url ? `<img src="${p.image_url}" alt="${p.title}" style="width:100%;height:100%;object-fit:cover;">` : `<div style="width:100%;height:100%;background:url('hero_bg.png') center/cover;opacity:0.8;"></div>`}
                         </div>
                       </div>
                       <div class="project-info">
@@ -487,8 +483,8 @@ async function fetchPortfolioData() {
                         <div class="project-footer">
                           <span class="project-year">${p.year}</span>
                           <div class="project-links">
-                            ${p.demo_link && p.demo_link !== '#' ? `<a href="${p.demo_link}" target="_blank">↗ Demo</a>` : ''}
-                            ${p.github_link && p.github_link !== '#' ? `<a href="${p.github_link}" target="_blank">↗ GitHub</a>` : ''}
+                            ${p.demo_link && p.demo_link !== '#' ? `<a href="${p.demo_link}" target="_blank" class="primary-link">Live Demo ↗</a>` : ''}
+                            ${p.github_link && p.github_link !== '#' ? `<a href="${p.github_link}" target="_blank" class="secondary-link">Source Code ↗</a>` : ''}
                           </div>
                         </div>
                       </div>
