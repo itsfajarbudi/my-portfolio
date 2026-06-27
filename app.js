@@ -886,8 +886,14 @@ async function fetchPortfolioData() {
 
         // Render Profile
         if (profile) {
-            if (document.getElementById('dyn-hero-title')) document.getElementById('dyn-hero-title').innerHTML = profile.hero_title;
-            if (document.getElementById('dyn-hero-desc')) document.getElementById('dyn-hero-desc').innerHTML = profile.hero_desc;
+            if (profile.hero_title) document.getElementById('dyn-hero-title').innerHTML = profile.hero_title;
+            if (profile.hero_desc) document.getElementById('dyn-hero-desc').innerHTML = profile.hero_desc;
+            
+            if (profile.avatar_url) {
+                const img = document.getElementById('dyn-profile-img');
+                if (img) img.src = profile.avatar_url;
+            }
+
             if (document.getElementById('dyn-stat-years')) document.getElementById('dyn-stat-years').innerText = profile.stat_years;
             if (document.getElementById('dyn-stat-projects')) document.getElementById('dyn-stat-projects').innerText = profile.stat_projects;
             if (document.getElementById('dyn-mission')) document.getElementById('dyn-mission').innerHTML = profile.about_mission;
@@ -992,6 +998,7 @@ async function fetchPortfolioData() {
                         <div class="cert-card-back">
                           <h4>${c.title}</h4>
                           <p>${c.description}</p>
+                          ${c.image_url ? `<img src="${c.image_url}" alt="${c.title}" style="width:100%; border-radius:4px; margin-top:8px; margin-bottom:8px;">` : ''}
                           <div class="cert-back-meta">
                             <span>Penerbit: ${c.issuer}</span>
                             <span>Tanggal: ${c.date}</span>
@@ -1043,14 +1050,20 @@ async function fetchPortfolioData() {
                         cardClass = 'now-card-learning'; iconWrapClass = 'now-icon-indigo';
                         iconSvg = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>';
                     } else {
-                        // reading
                         cardClass = 'now-card-reading'; iconWrapClass = 'now-icon-emerald';
                         iconSvg = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"/></svg>';
                     }
 
                     let innerContent = '';
+                    if (c.image_url) {
+                        innerContent += `<img src="${c.image_url}" alt="Attachment" style="width:100%; border-radius:6px; margin-bottom:1rem; border: 1px solid var(--border-color);">`;
+                    }
                     if (c.type === 'project') {
-                        innerContent = `
+                        innerContent += `<p>${desc}</p>`;
+                        if (items.length) {
+                            innerContent += `<div class="now-tags">${items.map(t => `<span>${t}</span>`).join('')}</div>`;
+                        }
+                        innerContent += `
                           ${metaLabel ? `<div class="now-card-meta"><span class="now-meta-label">${metaLabel}</span><p class="now-meta-value">${metaValue}</p></div>` : ''}
                           <div class="now-stack-badges">
                             ${items.map(i => `<span class="now-stack-badge">${i}</span>`).join('')}
@@ -1058,7 +1071,7 @@ async function fetchPortfolioData() {
                         `;
                     } else if (c.type === 'learning') {
                         const colors = ['#818cf8', '#34d399', '#60a5fa', '#f472b6'];
-                        innerContent = `
+                        innerContent += `
                           <div class="now-learning-topics">
                             ${items.map((item, idx) => `
                               <div class="now-topic-item">
@@ -1069,7 +1082,7 @@ async function fetchPortfolioData() {
                           </div>
                         `;
                     } else if (c.type === 'reading') {
-                        innerContent = `
+                        innerContent += `
                           <div class="now-reading-list">
                             ${items.map(item => {
                                 const parts = item.split('|');

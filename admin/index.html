@@ -103,6 +103,11 @@
                     <form id="profileForm" style="background: var(--card-bg); padding: 2rem; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
                         <h3>Hero Section</h3>
                         <div class="form-group">
+                            <label>Foto Profil (Upload untuk mengganti, opsional)</label>
+                            <input type="file" id="profAvatar" accept="image/*">
+                            <img id="profAvatarPreview" style="max-width: 100px; margin-top: 10px; display: none; border-radius: 8px;">
+                        </div>
+                        <div class="form-group">
                             <label>Judul & Nama (Gunakan &lt;br /&gt; untuk baris baru)</label>
                             <input type="text" id="profHeroTitle" required>
                         </div>
@@ -216,8 +221,9 @@
                     <textarea id="projectDesc" rows="3" required></textarea>
                 </div>
                 <div class="form-group">
-                    <label>Image URL (Opsional)</label>
-                    <input type="url" id="projectImage">
+                    <label>Upload Gambar Proyek (Opsional)</label>
+                    <input type="file" id="projectImageFile" accept="image/*">
+                    <img id="projectImagePreview" style="max-width: 150px; margin-top: 10px; display: none; border-radius: 4px;">
                 </div>
                 <div class="form-group">
                     <label>Demo Link</label>
@@ -266,9 +272,13 @@
                     <textarea id="certDesc" rows="3" required></textarea>
                 </div>
                 <div class="form-group">
-                    <label>Link Verifikasi</label>
-                    <input type="url" id="certLink">
+                    <label>Link Verifikasi (Opsional)</label>
+                    <input type="url" id="certVerifyLink">
                 </div>
+                <div class="form-group">
+                    <label>Upload Gambar Sertifikat (Opsional)</label>
+                    <input type="file" id="certImageFile" accept="image/*">
+                    <img id="certImagePreview" style="max-width: 150px; margin-top: 10px; display: none; border-radius: 4px;">
                 </div>
             </form>
         </div>
@@ -330,12 +340,17 @@
                     <textarea id="nowDescId" rows="3"></textarea>
                 </div>
                 <div class="form-group">
-                    <label>Meta Label (ID) - Opsional</label>
+                    <label>Label Metadata (ID) - Opsional</label>
                     <input type="text" id="nowMetaLabelId" placeholder="e.g. Dampak">
                 </div>
                 <div class="form-group">
-                    <label>Meta Value (ID) - Opsional</label>
+                    <label>Nilai Metadata (ID) - Opsional</label>
                     <input type="text" id="nowMetaValueId" placeholder="e.g. Melayani 50+ klien">
+                </div>
+                <div class="form-group">
+                    <label>Upload Gambar Now Page (Opsional)</label>
+                    <input type="file" id="nowImageFile" accept="image/*">
+                    <img id="nowImagePreview" style="max-width: 150px; margin-top: 10px; display: none; border-radius: 4px;">
                 </div>
                 <div class="form-group">
                     <label>Items (ID) - Pisahkan dengan koma</label>

@@ -2,6 +2,31 @@ const supabaseUrl = 'https://pommiyqbrpuboehojryu.supabase.co';
 const supabaseKey = 'sb_publishable_g9SRDW_5cJ2-aVeItpMtKw_huzMtgaV';
 const supabaseClient = window.supabase.createClient(supabaseUrl, supabaseKey);
 
+// ======================
+// UPLOAD HELPER
+// ======================
+async function uploadFileToSupabase(fileInputId, bucketName) {
+    const fileInput = document.getElementById(fileInputId);
+    if (!fileInput || !fileInput.files || fileInput.files.length === 0) {
+        return null; // No file selected
+    }
+    
+    const file = fileInput.files[0];
+    const fileExt = file.name.split('.').pop();
+    const fileName = `${Date.now()}_${Math.random().toString(36).substring(7)}.${fileExt}`;
+    const filePath = `${fileName}`;
+
+    const { data, error } = await supabaseClient.storage.from(bucketName).upload(filePath, file);
+    if (error) {
+        console.error('Upload error:', error);
+        throw error;
+    }
+    
+    // Get public URL
+    const { data: publicUrlData } = supabaseClient.storage.from(bucketName).getPublicUrl(filePath);
+    return publicUrlData.publicUrl;
+}
+
 // DOM Elements
 const loginScreen = document.getElementById('login-screen');
 const dashboardScreen = document.getElementById('dashboard-screen');
@@ -96,32 +121,65 @@ async function loadProfile() {
     document.getElementById('profLinkedin').value = p.linkedin || '';
     document.getElementById('profInstagram').value = p.instagram || '';
     document.getElementById('profFacebook').value = p.facebook || '';
+    
+    // Show avatar preview if exists
+    if (p.avatar_url) {
+        const preview = document.getElementById('profAvatarPreview');
+        preview.src = p.avatar_url;
+        preview.style.display = 'block';
+    }
 }
 
 document.getElementById('profileForm').addEventListener('submit', async (e) => {
     e.preventDefault();
-    const body = {
-        hero_title: document.getElementById('profHeroTitle').value,
-        roles: document.getElementById('profRoles').value,
-        hero_desc: document.getElementById('profHeroDesc').value,
-        stat_years: document.getElementById('profStatYears').value,
-        stat_projects: document.getElementById('profStatProjects').value,
-        about_mission: document.getElementById('profMission').value,
-        about_desc: document.getElementById('profApproach').value,
-        whatsapp: document.getElementById('profWa').value,
-        email: document.getElementById('profEmail').value,
-        github: document.getElementById('profGithub').value,
-        linkedin: document.getElementById('profLinkedin').value,
-        instagram: document.getElementById('profInstagram').value,
-        facebook: document.getElementById('profFacebook').value
-    };
+    const submitBtn = e.target.querySelector('button[type="submit"]');
+    const originalText = submitBtn.textContent;
+    submitBtn.textContent = 'Menyimpan...';
+    submitBtn.disabled = true;
 
-    const { error } = await supabaseClient.from('profile').update(body).eq('id', 1);
+    try {
+        let avatarUrl = null;
+        try {
+            avatarUrl = await uploadFileToSupabase('profAvatar', 'foto_profile');
+        } catch (err) {
+            alert('Gagal mengupload foto profil: ' + err.message);
+        }
 
-    if (error) {
-        alert('Gagal memperbarui profil: ' + error.message);
-    } else {
-        alert('Profil berhasil diperbarui!');
+        const body = {
+            hero_title: document.getElementById('profHeroTitle').value,
+            roles: document.getElementById('profRoles').value,
+            hero_desc: document.getElementById('profHeroDesc').value,
+            stat_years: document.getElementById('profStatYears').value,
+            stat_projects: document.getElementById('profStatProjects').value,
+            about_mission: document.getElementById('profMission').value,
+            about_desc: document.getElementById('profApproach').value,
+            whatsapp: document.getElementById('profWa').value,
+            email: document.getElementById('profEmail').value,
+            github: document.getElementById('profGithub').value,
+            linkedin: document.getElementById('profLinkedin').value,
+            instagram: document.getElementById('profInstagram').value,
+            facebook: document.getElementById('profFacebook').value
+        };
+
+        if (avatarUrl) {
+            body.avatar_url = avatarUrl;
+        }
+
+        const { error } = await supabaseClient.from('profile').update(body).eq('id', 1);
+
+        if (error) {
+            alert('Gagal memperbarui profil: ' + error.message);
+        } else {
+            alert('Profil berhasil diperbarui!');
+            if (avatarUrl) {
+                const preview = document.getElementById('profAvatarPreview');
+                preview.src = avatarUrl;
+                preview.style.display = 'block';
+            }
+        }
+    } finally {
+        submitBtn.textContent = originalText;
+        submitBtn.disabled = false;
     }
 });
 
@@ -167,9 +225,20 @@ function showProjectModal(id = null) {
             document.getElementById('projectYear').value = p.year;
             document.getElementById('projectTags').value = p.tags;
             document.getElementById('projectDesc').value = p.description;
-            document.getElementById('projectImage').value = p.image_url || '';
             document.getElementById('projectDemo').value = p.demo_link || '';
             document.getElementById('projectGithub').value = p.github_link || '';
+            
+            const preview = document.getElementById('projectImagePreview');
+            if (p.image_url) {
+                preview.src = p.image_url;
+                preview.style.display = 'block';
+                // Store old url in a dataset attribute so we don't lose it if no new file is uploaded
+                document.getElementById('projectImageFile').dataset.existingUrl = p.image_url;
+            } else {
+                preview.style.display = 'none';
+                delete document.getElementById('projectImageFile').dataset.existingUrl;
+            }
+            
             document.getElementById('projectModalTitle').textContent = 'Edit Proyek';
         }
     }
@@ -178,24 +247,44 @@ function showProjectModal(id = null) {
 
 document.getElementById('projectForm').addEventListener('submit', async (e) => {
     e.preventDefault();
-    const id = document.getElementById('projectId').value;
-    const body = {
-        title: document.getElementById('projectTitle').value,
-        year: document.getElementById('projectYear').value,
-        tags: document.getElementById('projectTags').value,
-        description: document.getElementById('projectDesc').value,
-        image_url: document.getElementById('projectImage').value,
-        demo_link: document.getElementById('projectDemo').value,
-        github_link: document.getElementById('projectGithub').value
-    };
+    const submitBtn = e.target.querySelector('button[type="submit"]');
+    const originalText = submitBtn.textContent;
+    submitBtn.textContent = 'Menyimpan...';
+    submitBtn.disabled = true;
 
-    if (id) {
-        await supabaseClient.from('projects').update(body).eq('id', id);
-    } else {
-        await supabaseClient.from('projects').insert([body]);
+    try {
+        const id = document.getElementById('projectId').value;
+        let imageUrl = document.getElementById('projectImageFile').dataset.existingUrl || null;
+        
+        try {
+            const uploadedUrl = await uploadFileToSupabase('projectImageFile', 'proyek_unggulan');
+            if (uploadedUrl) imageUrl = uploadedUrl;
+        } catch (err) {
+            alert('Gagal mengupload gambar proyek: ' + err.message);
+            return;
+        }
+
+        const body = {
+            title: document.getElementById('projectTitle').value,
+            year: document.getElementById('projectYear').value,
+            tags: document.getElementById('projectTags').value,
+            description: document.getElementById('projectDesc').value,
+            image_url: imageUrl,
+            demo_link: document.getElementById('projectDemo').value,
+            github_link: document.getElementById('projectGithub').value
+        };
+
+        if (id) {
+            await supabaseClient.from('projects').update(body).eq('id', id);
+        } else {
+            await supabaseClient.from('projects').insert([body]);
+        }
+        closeModal('projectModal');
+        loadProjects();
+    } finally {
+        submitBtn.textContent = originalText;
+        submitBtn.disabled = false;
     }
-    closeModal('projectModal');
-    loadProjects();
 });
 
 async function deleteProject(id) {
@@ -249,7 +338,18 @@ function showCertModal(id = null) {
             document.getElementById('certCategory').value = c.category;
             document.getElementById('certDate').value = c.date;
             document.getElementById('certDesc').value = c.description;
-            document.getElementById('certLink').value = c.verify_link || '';
+            document.getElementById('certVerifyLink').value = c.verify_link || '';
+            
+            const preview = document.getElementById('certImagePreview');
+            if (c.image_url) {
+                preview.src = c.image_url;
+                preview.style.display = 'block';
+                document.getElementById('certImageFile').dataset.existingUrl = c.image_url;
+            } else {
+                preview.style.display = 'none';
+                delete document.getElementById('certImageFile').dataset.existingUrl;
+            }
+            
             document.getElementById('certModalTitle').textContent = 'Edit Sertifikat';
         }
     }
@@ -258,23 +358,44 @@ function showCertModal(id = null) {
 
 document.getElementById('certForm').addEventListener('submit', async (e) => {
     e.preventDefault();
-    const id = document.getElementById('certId').value;
-    const body = {
-        title: document.getElementById('certTitle').value,
-        issuer: document.getElementById('certIssuer').value,
-        category: document.getElementById('certCategory').value,
-        date: document.getElementById('certDate').value,
-        description: document.getElementById('certDesc').value,
-        verify_link: document.getElementById('certLink').value
-    };
+    const submitBtn = e.target.querySelector('button[type="submit"]');
+    const originalText = submitBtn.textContent;
+    submitBtn.textContent = 'Menyimpan...';
+    submitBtn.disabled = true;
 
-    if (id) {
-        await supabaseClient.from('certificates').update(body).eq('id', id);
-    } else {
-        await supabaseClient.from('certificates').insert([body]);
+    try {
+        const id = document.getElementById('certId').value;
+        let imageUrl = document.getElementById('certImageFile').dataset.existingUrl || null;
+        
+        try {
+            const uploadedUrl = await uploadFileToSupabase('certImageFile', 'sertifikat_dan_penghargaan');
+            if (uploadedUrl) imageUrl = uploadedUrl;
+        } catch (err) {
+            alert('Gagal mengupload gambar sertifikat: ' + err.message);
+            return;
+        }
+
+        const body = {
+            title: document.getElementById('certTitle').value,
+            issuer: document.getElementById('certIssuer').value,
+            category: document.getElementById('certCategory').value,
+            date: document.getElementById('certDate').value,
+            description: document.getElementById('certDesc').value,
+            verify_link: document.getElementById('certVerifyLink').value,
+            image_url: imageUrl
+        };
+
+        if (id) {
+            await supabaseClient.from('certificates').update(body).eq('id', id);
+        } else {
+            await supabaseClient.from('certificates').insert([body]);
+        }
+        closeModal('certModal');
+        loadCertificates();
+    } finally {
+        submitBtn.textContent = originalText;
+        submitBtn.disabled = false;
     }
-    closeModal('certModal');
-    loadCertificates();
 });
 
 async function deleteCert(id) {
@@ -339,6 +460,16 @@ function showNowModal(id = null) {
             document.getElementById('nowMetaValueId').value = item.meta_value_id || '';
             document.getElementById('nowItemsId').value = (item.items_id || []).join(', ');
             
+            const preview = document.getElementById('nowImagePreview');
+            if (item.image_url) {
+                preview.src = item.image_url;
+                preview.style.display = 'block';
+                document.getElementById('nowImageFile').dataset.existingUrl = item.image_url;
+            } else {
+                preview.style.display = 'none';
+                delete document.getElementById('nowImageFile').dataset.existingUrl;
+            }
+            
             document.getElementById('nowSortOrder').value = item.sort_order || 0;
             
             document.getElementById('nowModalTitle').textContent = 'Edit Item Now';
@@ -349,37 +480,57 @@ function showNowModal(id = null) {
 
 document.getElementById('nowForm').addEventListener('submit', async (e) => {
     e.preventDefault();
-    const id = document.getElementById('nowId').value;
-    
-    // Helper to parse comma separated string to JSON array
-    const parseItems = (str) => str ? str.split(',').map(s => s.trim()).filter(s => s) : [];
+    const submitBtn = e.target.querySelector('button[type="submit"]');
+    const originalText = submitBtn.textContent;
+    submitBtn.textContent = 'Menyimpan...';
+    submitBtn.disabled = true;
 
-    const body = {
-        type: document.getElementById('nowType').value,
-        badge_en: document.getElementById('nowBadgeEn').value,
-        title_en: document.getElementById('nowTitleEn').value,
-        desc_en: document.getElementById('nowDescEn').value,
-        meta_label_en: document.getElementById('nowMetaLabelEn').value,
-        meta_value_en: document.getElementById('nowMetaValueEn').value,
-        items_en: parseItems(document.getElementById('nowItemsEn').value),
+    try {
+        const id = document.getElementById('nowId').value;
+        let imageUrl = document.getElementById('nowImageFile').dataset.existingUrl || null;
         
-        badge_id: document.getElementById('nowBadgeId').value,
-        title_id: document.getElementById('nowTitleId').value,
-        desc_id: document.getElementById('nowDescId').value,
-        meta_label_id: document.getElementById('nowMetaLabelId').value,
-        meta_value_id: document.getElementById('nowMetaValueId').value,
-        items_id: parseItems(document.getElementById('nowItemsId').value),
+        try {
+            const uploadedUrl = await uploadFileToSupabase('nowImageFile', 'now_page');
+            if (uploadedUrl) imageUrl = uploadedUrl;
+        } catch (err) {
+            alert('Gagal mengupload gambar now page: ' + err.message);
+            return;
+        }
         
-        sort_order: parseInt(document.getElementById('nowSortOrder').value) || 0
-    };
+        // Helper to parse comma separated string to JSON array
+        const parseItems = (str) => str ? str.split(',').map(s => s.trim()).filter(s => s) : [];
 
-    if (id) {
-        await supabaseClient.from('now_focus').update(body).eq('id', id);
-    } else {
-        await supabaseClient.from('now_focus').insert([body]);
+        const body = {
+            type: document.getElementById('nowType').value,
+            badge_en: document.getElementById('nowBadgeEn').value,
+            title_en: document.getElementById('nowTitleEn').value,
+            desc_en: document.getElementById('nowDescEn').value,
+            meta_label_en: document.getElementById('nowMetaLabelEn').value,
+            meta_value_en: document.getElementById('nowMetaValueEn').value,
+            items_en: parseItems(document.getElementById('nowItemsEn').value),
+            
+            badge_id: document.getElementById('nowBadgeId').value,
+            title_id: document.getElementById('nowTitleId').value,
+            desc_id: document.getElementById('nowDescId').value,
+            meta_label_id: document.getElementById('nowMetaLabelId').value,
+            meta_value_id: document.getElementById('nowMetaValueId').value,
+            items_id: parseItems(document.getElementById('nowItemsId').value),
+            
+            sort_order: parseInt(document.getElementById('nowSortOrder').value) || 0,
+            image_url: imageUrl
+        };
+
+        if (id) {
+            await supabaseClient.from('now_focus').update(body).eq('id', id);
+        } else {
+            await supabaseClient.from('now_focus').insert([body]);
+        }
+        closeModal('nowModal');
+        loadNowItems();
+    } finally {
+        submitBtn.textContent = originalText;
+        submitBtn.disabled = false;
     }
-    closeModal('nowModal');
-    loadNowItems();
 });
 
 async function deleteNow(id) {
