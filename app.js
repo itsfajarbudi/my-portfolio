@@ -968,8 +968,8 @@ async function fetchPortfolioData() {
             const projectsGrid = document.getElementById('projectsGrid');
             if (projectsGrid && window.globalProjects) {
                 projectsGrid.innerHTML = window.globalProjects.map(p => {
-                    const title = lang === 'en' ? (p.title_en || p.title_id || '') : (p.title_id || p.title_en || '');
-                    const desc = lang === 'en' ? (p.description_en || p.description_id || '') : (p.description_id || p.description_en || '');
+                    const title = p.title_id || '';
+                    const desc = p.description_id || '';
                     const tagsHtml = (p.tags||'').split(',').map(tag => `<span class="ptag">${tag.trim()}</span>`).join('');
                     return `
                         <div class="project-card reveal">
@@ -985,8 +985,8 @@ async function fetchPortfolioData() {
                             <div class="project-footer">
                               <span class="project-year">${p.year}</span>
                               <div class="project-links">
-                                ${p.demo_link && p.demo_link !== '#' ? `<a href="${p.demo_link}" target="_blank" class="primary-link">${window.i18n ? window.i18n.t('project_demo') : 'Live Demo ↗'}</a>` : ''}
-                                ${p.github_link && p.github_link !== '#' ? `<a href="${p.github_link}" target="_blank" class="secondary-link">${window.i18n ? window.i18n.t('project_source') : 'Source Code ↗'}</a>` : ''}
+                                ${p.demo_link && p.demo_link !== '#' ? `<a href="${p.demo_link}" target="_blank" class="primary-link">Live Demo ↗</a>` : ''}
+                                ${p.github_link && p.github_link !== '#' ? `<a href="${p.github_link}" target="_blank" class="secondary-link">Source Code ↗</a>` : ''}
                               </div>
                             </div>
                           </div>
@@ -999,8 +999,8 @@ async function fetchPortfolioData() {
             const certsGrid = document.getElementById('certsGrid');
             if (certsGrid && window.globalCerts) {
                 certsGrid.innerHTML = window.globalCerts.map(c => {
-                    const title = lang === 'en' ? (c.title_en || c.title_id || '') : (c.title_id || c.title_en || '');
-                    const desc = lang === 'en' ? (c.description_en || c.description_id || '') : (c.description_id || c.description_en || '');
+                    const title = c.title_id || '';
+                    const desc = c.description_id || '';
                     const iconColor = c.category === 'programming' ? 'cert-icon-blue' : c.category === 'design' ? 'cert-icon-purple' : 'cert-icon-teal';
                     const categoryLabel = c.category ? c.category.charAt(0).toUpperCase() + c.category.slice(1) : '';
                     
@@ -1029,17 +1029,17 @@ async function fetchPortfolioData() {
                                   <span class="cert-badge ${c.category}">${categoryLabel}</span>
                                 </div>
                               </div>
-                              <div class="cert-hover-hint">${window.i18n ? window.i18n.t('cert_click_detail') : 'Klik untuk detail'}</div>
+                              <div class="cert-hover-hint">Klik untuk detail</div>
                             </div>
                             <div class="cert-card-back">
                               <h4>${title}</h4>
                               <p>${desc}</p>
                               ${c.image_url ? `<img src="${c.image_url}" alt="${title}" style="width:100%; border-radius:4px; margin-top:8px; margin-bottom:8px;">` : ''}
                               <div class="cert-back-meta">
-                                <span>${window.i18n ? window.i18n.t('cert_issuer') : 'Penerbit'}: ${c.issuer}</span>
-                                <span>${window.i18n ? window.i18n.t('cert_date') : 'Tanggal'}: ${c.date}</span>
+                                <span>Penerbit: ${c.issuer}</span>
+                                <span>Tanggal: ${c.date}</span>
                               </div>
-                              ${c.verify_link && c.verify_link !== '#' ? `<a href="${c.verify_link}" target="_blank" class="cert-verify-btn">${window.i18n ? window.i18n.t('cert_verify') : 'Verifikasi Sertifikat ↗'}</a>` : ''}
+                              ${c.verify_link && c.verify_link !== '#' ? `<a href="${c.verify_link}" target="_blank" class="cert-verify-btn">Verifikasi Sertifikat ↗</a>` : ''}
                             </div>
                           </div>
                         </div>
@@ -1080,12 +1080,15 @@ async function fetchPortfolioData() {
             if (nowGrid) {
                 const cards = data.filter(d => d.type !== 'milestone');
                 nowGrid.innerHTML = cards.map(c => {
-                    const title = lang === 'en' ? c.title_en : c.title_id;
-                    const badge = lang === 'en' ? c.badge_en : c.badge_id;
-                    const desc = lang === 'en' ? c.desc_en : c.desc_id;
-                    const metaLabel = lang === 'en' ? c.meta_label_en : c.meta_label_id;
-                    const metaValue = lang === 'en' ? c.meta_value_en : c.meta_value_id;
-                    const items = lang === 'en' ? (c.items_en || []) : (c.items_id || []);
+                    const title = c.title_id;
+                    const badge = c.badge_id;
+                    const desc = c.desc_id;
+                    const metaLabel = c.meta_label_id;
+                    const metaValue = c.meta_value_id;
+                    let items = c.items_id || [];
+                    if (typeof items === 'string') {
+                        try { items = JSON.parse(items); } catch(e) { items = items.split(',').map(s => s.trim()); }
+                    }
                     
                     let cardClass, iconSvg, iconWrapClass;
                     if (c.type === 'project') {
