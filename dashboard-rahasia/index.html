@@ -22,7 +22,10 @@
                     <label>Password</label>
                     <input type="password" id="password" required>
                 </div>
-                <button type="submit" class="btn btn-primary">Login</button>
+                <button type="submit" class="btn btn-primary" style="width: 100%; margin-bottom: 10px;">Login</button>
+                <div style="text-align: center;">
+                    <a href="#" id="forgotPasswordLink" style="font-size: 0.9em; color: var(--primary);">Lupa Password?</a>
+                </div>
                 <p id="login-error" class="error-msg"></p>
             </form>
         </div>
@@ -187,6 +190,18 @@
                         </div>
 
                         <button type="submit" class="btn btn-primary" style="margin-top:1rem; width: 100%;">Simpan Perubahan Profil</button>
+                    </form>
+
+                    <hr style="margin: 2rem 0; border: none; border-top: 1px solid var(--border-color);">
+                    
+                    <h3 style="margin-bottom:1rem; color: #f44336;">Ubah Password</h3>
+                    <form id="changePasswordForm">
+                        <div class="form-group">
+                            <label>Password Baru</label>
+                            <input type="password" id="newPassword" required minlength="6">
+                        </div>
+                        <button type="submit" class="btn btn-outline" style="border-color: #f44336; color: #f44336; width: 100%;">Perbarui Password</button>
+                        <p id="password-msg" style="margin-top: 10px; font-size: 0.9em;"></p>
                     </form>
                 </section>
 

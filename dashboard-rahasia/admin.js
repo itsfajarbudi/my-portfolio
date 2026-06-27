@@ -101,6 +101,34 @@ logoutBtn.addEventListener('click', async () => {
     showLogin();
 });
 
+const forgotPasswordLink = document.getElementById('forgotPasswordLink');
+if (forgotPasswordLink) {
+    forgotPasswordLink.addEventListener('click', async (e) => {
+        e.preventDefault();
+        const email = document.getElementById('username').value;
+        if (!email) {
+            errorMsg.textContent = 'Silakan masukkan email Anda di kolom Email terlebih dahulu untuk mereset password.';
+            errorMsg.style.color = '#ff9800'; // Orange warning color
+            return;
+        }
+        
+        errorMsg.textContent = 'Mengirim email reset password...';
+        errorMsg.style.color = 'var(--text-secondary)';
+
+        const { data, error } = await supabaseClient.auth.resetPasswordForEmail(email, {
+            redirectTo: window.location.href, // Redirect back to this page after reset
+        });
+
+        if (error) {
+            errorMsg.textContent = 'Gagal mengirim email reset: ' + error.message;
+            errorMsg.style.color = '#f44336';
+        } else {
+            errorMsg.textContent = 'Link reset password telah dikirim ke email Anda! Silakan cek inbox/spam.';
+            errorMsg.style.color = '#4caf50'; // Green success color
+        }
+    });
+}
+
 function showLogin() {
     loginScreen.classList.remove('hidden');
     dashboardScreen.classList.add('hidden');
@@ -218,6 +246,38 @@ document.getElementById('profileForm').addEventListener('submit', async (e) => {
         submitBtn.disabled = false;
     }
 });
+
+const changePasswordForm = document.getElementById('changePasswordForm');
+if (changePasswordForm) {
+    changePasswordForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const submitBtn = e.target.querySelector('button[type="submit"]');
+        const originalText = submitBtn.textContent;
+        const msg = document.getElementById('password-msg');
+        
+        submitBtn.textContent = 'Memperbarui...';
+        submitBtn.disabled = true;
+        msg.textContent = '';
+        
+        const newPassword = document.getElementById('newPassword').value;
+        
+        const { data, error } = await supabaseClient.auth.updateUser({
+            password: newPassword
+        });
+        
+        if (error) {
+            msg.textContent = 'Gagal memperbarui password: ' + error.message;
+            msg.style.color = '#f44336';
+        } else {
+            msg.textContent = 'Password berhasil diperbarui!';
+            msg.style.color = '#4caf50';
+            document.getElementById('newPassword').value = '';
+        }
+        
+        submitBtn.textContent = originalText;
+        submitBtn.disabled = false;
+    });
+}
 
 // ======================
 // PROJECTS
