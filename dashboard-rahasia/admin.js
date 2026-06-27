@@ -210,7 +210,7 @@ function renderProjects() {
     projectsData.forEach(p => {
         const tr = document.createElement('tr');
         tr.innerHTML = `
-            <td>${p.title}</td>
+            <td>${p.title_id || p.title_en || '-'}</td>
             <td>${p.year}</td>
             <td>${p.tags}</td>
             <td class="action-cell">
@@ -335,7 +335,7 @@ function renderCertificates() {
     certsData.forEach(c => {
         const tr = document.createElement('tr');
         tr.innerHTML = `
-            <td>${c.title}</td>
+            <td>${c.title_id || c.title_en || '-'}</td>
             <td>${c.issuer}</td>
             <td>${c.category}</td>
             <td>${c.date}</td>
