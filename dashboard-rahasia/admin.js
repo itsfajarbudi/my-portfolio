@@ -1,6 +1,6 @@
-const supabaseUrl = window.supabaseUrl;
-const supabaseKey = window.supabaseKey;
-const supabaseClient = window.supabaseClient;
+const supabaseUrl = 'https://pommiyqbrpuboehojryu.supabase.co';
+const supabaseKey = 'sb_publishable_g9SRDW_5cJ2-aVeItpMtKw_huzMtgaV';
+const supabaseClient = window.supabase.createClient(supabaseUrl, supabaseKey);
 
 // --- AUTO TRANSLATION HELPER ---
 async function autoTranslate(text) {
