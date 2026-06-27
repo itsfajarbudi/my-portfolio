@@ -1,6 +1,20 @@
-const supabaseUrl = 'https://pommiyqbrpuboehojryu.supabase.co';
-const supabaseKey = 'sb_publishable_g9SRDW_5cJ2-aVeItpMtKw_huzMtgaV';
-const supabaseClient = window.supabase.createClient(supabaseUrl, supabaseKey);
+const supabaseUrl = window.supabaseUrl;
+const supabaseKey = window.supabaseKey;
+const supabaseClient = window.supabaseClient;
+
+// --- AUTO TRANSLATION HELPER ---
+async function autoTranslate(text) {
+    if (!text || text.trim() === '') return '';
+    try {
+        const res = await fetch('https://translate.googleapis.com/translate_a/single?client=gtx&sl=id&tl=en&dt=t&q=' + encodeURIComponent(text));
+        const data = await res.json();
+        return data[0].map(x => x[0]).join('');
+    } catch (e) {
+        console.error('Translation error:', e);
+        return text; // fallback to original text if translation fails
+    }
+}
+// --------------------------------
 
 // ======================
 // UPLOAD HELPER
@@ -139,16 +153,28 @@ document.getElementById('profileForm').addEventListener('submit', async (e) => {
     e.preventDefault();
     const submitBtn = e.target.querySelector('button[type="submit"]');
     const originalText = submitBtn.textContent;
-    submitBtn.textContent = 'Menyimpan...';
     submitBtn.disabled = true;
 
     try {
         let avatarUrl = null;
-        try {
-            avatarUrl = await uploadFileToSupabase('profAvatar', 'foto_profile');
-        } catch (err) {
-            alert('Gagal mengupload foto profil: ' + err.message);
+        const fileInput = document.getElementById('profAvatar');
+        if (fileInput.files && fileInput.files.length > 0) {
+            submitBtn.textContent = 'Mengupload Foto...';
+            try {
+                avatarUrl = await uploadFileToSupabase('profAvatar', 'foto_profile');
+            } catch (err) {
+                console.error(err);
+                alert('Gagal mengupload foto profil: ' + err.message);
+            }
         }
+
+        submitBtn.textContent = 'Menerjemahkan & Menyimpan...';
+        
+        document.getElementById('profHeroTitleEn').value = await autoTranslate(document.getElementById('profHeroTitleId').value);
+        document.getElementById('profRolesEn').value = await autoTranslate(document.getElementById('profRolesId').value);
+        document.getElementById('profHeroDescEn').value = await autoTranslate(document.getElementById('profHeroDescId').value);
+        document.getElementById('profMissionEn').value = await autoTranslate(document.getElementById('profMissionId').value);
+        document.getElementById('profApproachEn').value = await autoTranslate(document.getElementById('profApproachId').value);
 
         const body = {
             hero_title_id: document.getElementById('profHeroTitleId').value,
@@ -271,20 +297,28 @@ document.getElementById('projectForm').addEventListener('submit', async (e) => {
     e.preventDefault();
     const submitBtn = e.target.querySelector('button[type="submit"]');
     const originalText = submitBtn.textContent;
-    submitBtn.textContent = 'Menyimpan...';
     submitBtn.disabled = true;
 
     try {
         const id = document.getElementById('projectId').value;
         let imageUrl = document.getElementById('projectImageFile').dataset.existingUrl || null;
         
-        try {
-            const uploadedUrl = await uploadFileToSupabase('projectImageFile', 'proyek_unggulan');
-            if (uploadedUrl) imageUrl = uploadedUrl;
-        } catch (err) {
-            alert('Gagal mengupload gambar proyek: ' + err.message);
-            return;
+        const fileInput = document.getElementById('projectImageFile');
+        if (fileInput.files && fileInput.files.length > 0) {
+            submitBtn.textContent = 'Mengupload Gambar...';
+            try {
+                const uploadedUrl = await uploadFileToSupabase('projectImageFile', 'proyek_unggulan');
+                if (uploadedUrl) imageUrl = uploadedUrl;
+            } catch (err) {
+                console.error(err);
+                alert('Gagal mengupload gambar: ' + err.message);
+                return;
+            }
         }
+        
+        submitBtn.textContent = 'Menerjemahkan...';
+        document.getElementById('projectTitleEn').value = await autoTranslate(document.getElementById('projectTitleId').value);
+        document.getElementById('projectDescEn').value = await autoTranslate(document.getElementById('projectDescId').value);
 
         const body = {
             title_id: document.getElementById('projectTitleId').value,
@@ -396,20 +430,28 @@ document.getElementById('certForm').addEventListener('submit', async (e) => {
     e.preventDefault();
     const submitBtn = e.target.querySelector('button[type="submit"]');
     const originalText = submitBtn.textContent;
-    submitBtn.textContent = 'Menyimpan...';
     submitBtn.disabled = true;
 
     try {
         const id = document.getElementById('certId').value;
         let imageUrl = document.getElementById('certImageFile').dataset.existingUrl || null;
         
-        try {
-            const uploadedUrl = await uploadFileToSupabase('certImageFile', 'sertifikat_dan_penghargaan');
-            if (uploadedUrl) imageUrl = uploadedUrl;
-        } catch (err) {
-            alert('Gagal mengupload gambar sertifikat: ' + err.message);
-            return;
+        const fileInput = document.getElementById('certImageFile');
+        if (fileInput.files && fileInput.files.length > 0) {
+            submitBtn.textContent = 'Mengupload Sertifikat...';
+            try {
+                const uploadedUrl = await uploadFileToSupabase('certImageFile', 'sertifikat_dan_penghargaan');
+                if (uploadedUrl) imageUrl = uploadedUrl;
+            } catch (err) {
+                console.error(err);
+                alert('Gagal mengupload sertifikat: ' + err.message);
+                return;
+            }
         }
+        
+        submitBtn.textContent = 'Menerjemahkan...';
+        document.getElementById('certTitleEn').value = await autoTranslate(document.getElementById('certTitleId').value);
+        document.getElementById('certDescEn').value = await autoTranslate(document.getElementById('certDescId').value);
 
         const body = {
             title_id: document.getElementById('certTitleId').value,
@@ -536,15 +578,30 @@ document.getElementById('nowForm').addEventListener('submit', async (e) => {
     try {
         const id = document.getElementById('nowId').value;
         let imageUrl = document.getElementById('nowImageFile').dataset.existingUrl || null;
-        
-        try {
-            const uploadedUrl = await uploadFileToSupabase('nowImageFile', 'now_page');
-            if (uploadedUrl) imageUrl = uploadedUrl;
-        } catch (err) {
-            alert('Gagal mengupload gambar now page: ' + err.message);
-            return;
+
+        const fileInput = document.getElementById('nowImageFile');
+        if (fileInput.files && fileInput.files.length > 0) {
+            submitBtn.textContent = 'Mengupload Gambar...';
+            try {
+                const uploadedUrl = await uploadFileToSupabase('nowImageFile', 'now_focus');
+                if (uploadedUrl) imageUrl = uploadedUrl;
+            } catch (err) {
+                console.error(err);
+                alert('Gagal mengupload gambar now focus: ' + err.message);
+                return;
+            }
         }
+
+        const isEdit = document.getElementById('nowId').value !== '';
         
+        submitBtn.textContent = 'Menerjemahkan...';
+        document.getElementById('nowTitleEn').value = await autoTranslate(document.getElementById('nowTitleId').value);
+        document.getElementById('nowDescEn').value = await autoTranslate(document.getElementById('nowDescId').value);
+        document.getElementById('nowBadgeEn').value = await autoTranslate(document.getElementById('nowBadgeId').value);
+        document.getElementById('nowMetaLabelEn').value = await autoTranslate(document.getElementById('nowMetaLabelId').value);
+        document.getElementById('nowMetaValueEn').value = await autoTranslate(document.getElementById('nowMetaValueId').value);
+        document.getElementById('nowItemsEn').value = document.getElementById('nowItemsId').value;
+
         // Helper to parse comma separated string to JSON array
         const parseItems = (str) => str ? str.split(',').map(s => s.trim()).filter(s => s) : [];
 

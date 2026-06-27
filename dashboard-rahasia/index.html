@@ -108,28 +108,28 @@
                             <img id="profAvatarPreview" style="max-width: 100px; margin-top: 10px; display: none; border-radius: 8px;">
                         </div>
                         <div class="form-group">
-                            <label>Judul & Nama (ID)</label>
+                            <label>Judul & Nama </label>
                             <input type="text" id="profHeroTitleId" required>
                         </div>
-                        <div class="form-group">
+                        <div class="form-group" style="display:none;">
                             <label>Judul & Nama (EN)</label>
-                            <input type="text" id="profHeroTitleEn" required>
+                            <input type="text" id="profHeroTitleEn">
                         </div>
                         <div class="form-group">
-                            <label>Teks Animasi Role (ID) - Pisahkan dengan koma</label>
+                            <label>Teks Animasi Role  - Pisahkan dengan koma</label>
                             <input type="text" id="profRolesId" required>
                         </div>
-                        <div class="form-group">
+                        <div class="form-group" style="display:none;">
                             <label>Teks Animasi Role (EN) - Pisahkan dengan koma</label>
-                            <input type="text" id="profRolesEn" required>
+                            <input type="text" id="profRolesEn">
                         </div>
                         <div class="form-group">
-                            <label>Deskripsi Singkat Hero (ID)</label>
+                            <label>Deskripsi Singkat Hero </label>
                             <textarea id="profHeroDescId" rows="3" required></textarea>
                         </div>
-                        <div class="form-group">
+                        <div class="form-group" style="display:none;">
                             <label>Deskripsi Singkat Hero (EN)</label>
-                            <textarea id="profHeroDescEn" rows="3" required></textarea>
+                            <textarea id="profHeroDescEn" rows="3"></textarea>
                         </div>
 
                         <h3 style="margin-top:2rem;">Statistik</h3>
@@ -144,20 +144,20 @@
 
                         <h3 style="margin-top:2rem;">Visi & Misi</h3>
                         <div class="form-group">
-                            <label>Paragraf Misi (ID)</label>
+                            <label>Paragraf Misi </label>
                             <textarea id="profMissionId" rows="3" required></textarea>
                         </div>
-                        <div class="form-group">
+                        <div class="form-group" style="display:none;">
                             <label>Paragraf Misi (EN)</label>
-                            <textarea id="profMissionEn" rows="3" required></textarea>
+                            <textarea id="profMissionEn" rows="3"></textarea>
                         </div>
                         <div class="form-group">
-                            <label>Paragraf Pendekatan (ID)</label>
+                            <label>Paragraf Pendekatan </label>
                             <textarea id="profApproachId" rows="3" required></textarea>
                         </div>
-                        <div class="form-group">
+                        <div class="form-group" style="display:none;">
                             <label>Paragraf Pendekatan (EN)</label>
-                            <textarea id="profApproachEn" rows="3" required></textarea>
+                            <textarea id="profApproachEn" rows="3"></textarea>
                         </div>
 
                         <h3 style="margin-top:2rem;">Kontak & Sosial Media</h3>
@@ -225,12 +225,12 @@
             <form id="projectForm">
                 <input type="hidden" id="projectId">
                 <div class="form-group">
-                    <label>Judul Proyek (ID)</label>
+                    <label>Judul Proyek </label>
                     <input type="text" id="projectTitleId" required>
                 </div>
-                <div class="form-group">
+                <div class="form-group" style="display:none;">
                     <label>Judul Proyek (EN)</label>
-                    <input type="text" id="projectTitleEn" required>
+                    <input type="text" id="projectTitleEn">
                 </div>
                 <div class="form-group">
                     <label>Tahun</label>
@@ -241,12 +241,12 @@
                     <input type="text" id="projectTags" placeholder="React, Node.js, dll" required>
                 </div>
                 <div class="form-group">
-                    <label>Deskripsi Singkat (ID)</label>
+                    <label>Deskripsi Singkat </label>
                     <textarea id="projectDescId" rows="3" required></textarea>
                 </div>
-                <div class="form-group">
+                <div class="form-group" style="display:none;">
                     <label>Deskripsi Singkat (EN)</label>
-                    <textarea id="projectDescEn" rows="3" required></textarea>
+                    <textarea id="projectDescEn" rows="3"></textarea>
                 </div>
                 <div class="form-group">
                     <label>Upload Gambar Proyek (Opsional)</label>
@@ -276,12 +276,12 @@
             <form id="certForm">
                 <input type="hidden" id="certId">
                 <div class="form-group">
-                    <label>Judul Sertifikat (ID)</label>
+                    <label>Judul Sertifikat </label>
                     <input type="text" id="certTitleId" required>
                 </div>
-                <div class="form-group">
+                <div class="form-group" style="display:none;">
                     <label>Judul Sertifikat (EN)</label>
-                    <input type="text" id="certTitleEn" required>
+                    <input type="text" id="certTitleEn">
                 </div>
                 <div class="form-group">
                     <label>Penerbit</label>
@@ -300,12 +300,12 @@
                     <input type="text" id="certDate" required>
                 </div>
                 <div class="form-group">
-                    <label>Deskripsi Singkat (ID)</label>
+                    <label>Deskripsi Singkat </label>
                     <textarea id="certDescId" rows="3" required></textarea>
                 </div>
-                <div class="form-group">
+                <div class="form-group" style="display:none;">
                     <label>Deskripsi Singkat (EN)</label>
-                    <textarea id="certDescEn" rows="3" required></textarea>
+                    <textarea id="certDescEn" rows="3"></textarea>
                 </div>
                 <div class="form-group">
                     <label>Link Verifikasi (Opsional)</label>
@@ -340,51 +340,51 @@
                     </select>
                 </div>
                 
-                <h4 style="margin-top:1.5rem; margin-bottom:0.5rem;">Data Bahasa Inggris (EN)</h4>
-                <div class="form-group">
+                <h4 style="margin-top:1.5rem; margin-bottom:0.5rem; display:none;">Data Bahasa Inggris (EN)</h4>
+                <div class="form-group" style="display:none;">
                     <label>Status / Badge (EN)</label>
                     <input type="text" id="nowBadgeEn" placeholder="e.g. In Progress">
                 </div>
-                <div class="form-group">
+                <div class="form-group" style="display:none;">
                     <label>Judul (EN)</label>
-                    <input type="text" id="nowTitleEn" required>
+                    <input type="text" id="nowTitleEn">
                 </div>
-                <div class="form-group">
+                <div class="form-group" style="display:none;">
                     <label>Deskripsi (EN)</label>
                     <textarea id="nowDescEn" rows="3"></textarea>
                 </div>
-                <div class="form-group">
+                <div class="form-group" style="display:none;">
                     <label>Meta Label (EN) - Opsional</label>
                     <input type="text" id="nowMetaLabelEn" placeholder="e.g. Impact">
                 </div>
-                <div class="form-group">
+                <div class="form-group" style="display:none;">
                     <label>Meta Value (EN) - Opsional</label>
                     <input type="text" id="nowMetaValueEn" placeholder="e.g. Serves 50+ clients">
                 </div>
-                <div class="form-group">
+                <div class="form-group" style="display:none;">
                     <label>Items (EN) - Pisahkan dengan koma</label>
                     <textarea id="nowItemsEn" rows="2" placeholder="e.g. Node.js, Kubernetes, React"></textarea>
                 </div>
 
-                <h4 style="margin-top:1.5rem; margin-bottom:0.5rem;">Data Bahasa Indonesia (ID)</h4>
+                <h4 style="margin-top:1.5rem; margin-bottom:0.5rem; display:none;">Data Bahasa Indonesia (ID)</h4>
                 <div class="form-group">
-                    <label>Status / Badge (ID)</label>
+                    <label>Status / Badge </label>
                     <input type="text" id="nowBadgeId" placeholder="e.g. Sedang Berjalan">
                 </div>
                 <div class="form-group">
-                    <label>Judul (ID)</label>
+                    <label>Judul </label>
                     <input type="text" id="nowTitleId" required>
                 </div>
                 <div class="form-group">
-                    <label>Deskripsi (ID)</label>
+                    <label>Deskripsi </label>
                     <textarea id="nowDescId" rows="3"></textarea>
                 </div>
                 <div class="form-group">
-                    <label>Label Metadata (ID) - Opsional</label>
+                    <label>Label Metadata  - Opsional</label>
                     <input type="text" id="nowMetaLabelId" placeholder="e.g. Dampak">
                 </div>
                 <div class="form-group">
-                    <label>Nilai Metadata (ID) - Opsional</label>
+                    <label>Nilai Metadata  - Opsional</label>
                     <input type="text" id="nowMetaValueId" placeholder="e.g. Melayani 50+ klien">
                 </div>
                 <div class="form-group">
@@ -393,7 +393,7 @@
                     <img id="nowImagePreview" style="max-width: 150px; margin-top: 10px; display: none; border-radius: 4px;">
                 </div>
                 <div class="form-group">
-                    <label>Items (ID) - Pisahkan dengan koma</label>
+                    <label>Items  - Pisahkan dengan koma</label>
                     <textarea id="nowItemsId" rows="2" placeholder="e.g. Node.js, Kubernetes, React"></textarea>
                 </div>
 
