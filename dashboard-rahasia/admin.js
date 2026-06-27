@@ -108,13 +108,18 @@ async function loadProfile() {
     const { data: p, error } = await supabaseClient.from('profile').select('*').eq('id', 1).single();
     if (!p) return;
     
-    document.getElementById('profHeroTitle').value = p.hero_title || '';
-    document.getElementById('profRoles').value = p.roles || '';
-    document.getElementById('profHeroDesc').value = p.hero_desc || '';
+    document.getElementById('profHeroTitleId').value = p.hero_title_id || '';
+    document.getElementById('profHeroTitleEn').value = p.hero_title_en || '';
+    document.getElementById('profRolesId').value = p.roles_id || '';
+    document.getElementById('profRolesEn').value = p.roles_en || '';
+    document.getElementById('profHeroDescId').value = p.hero_desc_id || '';
+    document.getElementById('profHeroDescEn').value = p.hero_desc_en || '';
     document.getElementById('profStatYears').value = p.stat_years || '';
     document.getElementById('profStatProjects').value = p.stat_projects || '';
-    document.getElementById('profMission').value = p.about_mission || '';
-    document.getElementById('profApproach').value = p.about_desc || '';
+    document.getElementById('profMissionId').value = p.about_mission_id || '';
+    document.getElementById('profMissionEn').value = p.about_mission_en || '';
+    document.getElementById('profApproachId').value = p.about_desc_id || '';
+    document.getElementById('profApproachEn').value = p.about_desc_en || '';
     document.getElementById('profWa').value = p.whatsapp || '';
     document.getElementById('profEmail').value = p.email || '';
     document.getElementById('profGithub').value = p.github || '';
@@ -146,13 +151,18 @@ document.getElementById('profileForm').addEventListener('submit', async (e) => {
         }
 
         const body = {
-            hero_title: document.getElementById('profHeroTitle').value,
-            roles: document.getElementById('profRoles').value,
-            hero_desc: document.getElementById('profHeroDesc').value,
+            hero_title_id: document.getElementById('profHeroTitleId').value,
+            hero_title_en: document.getElementById('profHeroTitleEn').value,
+            roles_id: document.getElementById('profRolesId').value,
+            roles_en: document.getElementById('profRolesEn').value,
+            hero_desc_id: document.getElementById('profHeroDescId').value,
+            hero_desc_en: document.getElementById('profHeroDescEn').value,
             stat_years: document.getElementById('profStatYears').value,
             stat_projects: document.getElementById('profStatProjects').value,
-            about_mission: document.getElementById('profMission').value,
-            about_desc: document.getElementById('profApproach').value,
+            about_mission_id: document.getElementById('profMissionId').value,
+            about_mission_en: document.getElementById('profMissionEn').value,
+            about_desc_id: document.getElementById('profApproachId').value,
+            about_desc_en: document.getElementById('profApproachEn').value,
             whatsapp: document.getElementById('profWa').value,
             email: document.getElementById('profEmail').value,
             github: document.getElementById('profGithub').value,
@@ -231,10 +241,12 @@ function showProjectModal(id = null) {
         const p = projectsData.find(x => x.id == id);
         if (p) {
             document.getElementById('projectId').value = p.id;
-            document.getElementById('projectTitle').value = p.title;
+            document.getElementById('projectTitleId').value = p.title_id || '';
+            document.getElementById('projectTitleEn').value = p.title_en || '';
             document.getElementById('projectYear').value = p.year;
             document.getElementById('projectTags').value = p.tags;
-            document.getElementById('projectDesc').value = p.description;
+            document.getElementById('projectDescId').value = p.description_id || '';
+            document.getElementById('projectDescEn').value = p.description_en || '';
             document.getElementById('projectDemo').value = p.demo_link || '';
             document.getElementById('projectGithub').value = p.github_link || '';
             
@@ -275,10 +287,12 @@ document.getElementById('projectForm').addEventListener('submit', async (e) => {
         }
 
         const body = {
-            title: document.getElementById('projectTitle').value,
+            title_id: document.getElementById('projectTitleId').value,
+            title_en: document.getElementById('projectTitleEn').value,
             year: document.getElementById('projectYear').value,
             tags: document.getElementById('projectTags').value,
-            description: document.getElementById('projectDesc').value,
+            description_id: document.getElementById('projectDescId').value,
+            description_en: document.getElementById('projectDescEn').value,
             image_url: imageUrl,
             demo_link: document.getElementById('projectDemo').value,
             github_link: document.getElementById('projectGithub').value
@@ -353,11 +367,13 @@ function showCertModal(id = null) {
         const c = certsData.find(x => x.id == id);
         if (c) {
             document.getElementById('certId').value = c.id;
-            document.getElementById('certTitle').value = c.title;
+            document.getElementById('certTitleId').value = c.title_id || '';
+            document.getElementById('certTitleEn').value = c.title_en || '';
             document.getElementById('certIssuer').value = c.issuer;
             document.getElementById('certCategory').value = c.category;
             document.getElementById('certDate').value = c.date;
-            document.getElementById('certDesc').value = c.description;
+            document.getElementById('certDescId').value = c.description_id || '';
+            document.getElementById('certDescEn').value = c.description_en || '';
             document.getElementById('certVerifyLink').value = c.verify_link || '';
             
             const preview = document.getElementById('certImagePreview');
@@ -396,11 +412,13 @@ document.getElementById('certForm').addEventListener('submit', async (e) => {
         }
 
         const body = {
-            title: document.getElementById('certTitle').value,
+            title_id: document.getElementById('certTitleId').value,
+            title_en: document.getElementById('certTitleEn').value,
             issuer: document.getElementById('certIssuer').value,
             category: document.getElementById('certCategory').value,
             date: document.getElementById('certDate').value,
-            description: document.getElementById('certDesc').value,
+            description_id: document.getElementById('certDescId').value,
+            description_en: document.getElementById('certDescEn').value,
             verify_link: document.getElementById('certVerifyLink').value,
             image_url: imageUrl
         };

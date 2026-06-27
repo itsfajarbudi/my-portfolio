@@ -108,16 +108,28 @@
                             <img id="profAvatarPreview" style="max-width: 100px; margin-top: 10px; display: none; border-radius: 8px;">
                         </div>
                         <div class="form-group">
-                            <label>Judul & Nama (Gunakan &lt;br /&gt; untuk baris baru)</label>
-                            <input type="text" id="profHeroTitle" required>
+                            <label>Judul & Nama (ID)</label>
+                            <input type="text" id="profHeroTitleId" required>
                         </div>
                         <div class="form-group">
-                            <label>Teks Animasi Role (Pisahkan dengan koma)</label>
-                            <input type="text" id="profRoles" required>
+                            <label>Judul & Nama (EN)</label>
+                            <input type="text" id="profHeroTitleEn" required>
                         </div>
                         <div class="form-group">
-                            <label>Deskripsi Singkat Hero</label>
-                            <textarea id="profHeroDesc" rows="3" required></textarea>
+                            <label>Teks Animasi Role (ID) - Pisahkan dengan koma</label>
+                            <input type="text" id="profRolesId" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Teks Animasi Role (EN) - Pisahkan dengan koma</label>
+                            <input type="text" id="profRolesEn" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Deskripsi Singkat Hero (ID)</label>
+                            <textarea id="profHeroDescId" rows="3" required></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>Deskripsi Singkat Hero (EN)</label>
+                            <textarea id="profHeroDescEn" rows="3" required></textarea>
                         </div>
 
                         <h3 style="margin-top:2rem;">Statistik</h3>
@@ -132,12 +144,20 @@
 
                         <h3 style="margin-top:2rem;">Visi & Misi</h3>
                         <div class="form-group">
-                            <label>Paragraf Misi</label>
-                            <textarea id="profMission" rows="3" required></textarea>
+                            <label>Paragraf Misi (ID)</label>
+                            <textarea id="profMissionId" rows="3" required></textarea>
                         </div>
                         <div class="form-group">
-                            <label>Paragraf Pendekatan</label>
-                            <textarea id="profApproach" rows="3" required></textarea>
+                            <label>Paragraf Misi (EN)</label>
+                            <textarea id="profMissionEn" rows="3" required></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>Paragraf Pendekatan (ID)</label>
+                            <textarea id="profApproachId" rows="3" required></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>Paragraf Pendekatan (EN)</label>
+                            <textarea id="profApproachEn" rows="3" required></textarea>
                         </div>
 
                         <h3 style="margin-top:2rem;">Kontak & Sosial Media</h3>
@@ -205,8 +225,12 @@
             <form id="projectForm">
                 <input type="hidden" id="projectId">
                 <div class="form-group">
-                    <label>Judul Proyek</label>
-                    <input type="text" id="projectTitle" required>
+                    <label>Judul Proyek (ID)</label>
+                    <input type="text" id="projectTitleId" required>
+                </div>
+                <div class="form-group">
+                    <label>Judul Proyek (EN)</label>
+                    <input type="text" id="projectTitleEn" required>
                 </div>
                 <div class="form-group">
                     <label>Tahun</label>
@@ -217,8 +241,12 @@
                     <input type="text" id="projectTags" placeholder="React, Node.js, dll" required>
                 </div>
                 <div class="form-group">
-                    <label>Deskripsi Singkat</label>
-                    <textarea id="projectDesc" rows="3" required></textarea>
+                    <label>Deskripsi Singkat (ID)</label>
+                    <textarea id="projectDescId" rows="3" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Deskripsi Singkat (EN)</label>
+                    <textarea id="projectDescEn" rows="3" required></textarea>
                 </div>
                 <div class="form-group">
                     <label>Upload Gambar Proyek (Opsional)</label>
@@ -248,8 +276,12 @@
             <form id="certForm">
                 <input type="hidden" id="certId">
                 <div class="form-group">
-                    <label>Judul Sertifikat</label>
-                    <input type="text" id="certTitle" required>
+                    <label>Judul Sertifikat (ID)</label>
+                    <input type="text" id="certTitleId" required>
+                </div>
+                <div class="form-group">
+                    <label>Judul Sertifikat (EN)</label>
+                    <input type="text" id="certTitleEn" required>
                 </div>
                 <div class="form-group">
                     <label>Penerbit</label>
@@ -268,8 +300,12 @@
                     <input type="text" id="certDate" required>
                 </div>
                 <div class="form-group">
-                    <label>Deskripsi Singkat</label>
-                    <textarea id="certDesc" rows="3" required></textarea>
+                    <label>Deskripsi Singkat (ID)</label>
+                    <textarea id="certDescId" rows="3" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Deskripsi Singkat (EN)</label>
+                    <textarea id="certDescEn" rows="3" required></textarea>
                 </div>
                 <div class="form-group">
                     <label>Link Verifikasi (Opsional)</label>

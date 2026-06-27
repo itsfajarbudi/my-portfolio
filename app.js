@@ -391,6 +391,10 @@
     // 10. Persist preference
     try { localStorage.setItem('portfolio_lang', lang); } catch (_) {}
     currentLang = lang;
+
+    // 11. Re-render dynamic sections if available
+    if (typeof window.renderDynamicSections === 'function') window.renderDynamicSections();
+    if (typeof window.renderNowSection === 'function') window.renderNowSection();
   }
 
   // ── Safe initial application (DOM must be ready at this point because
@@ -884,132 +888,151 @@ async function fetchPortfolioData() {
         const profile = profRes.data || null;
         window.globalNowData = nowRes.data || [];
 
-        // Render Profile
-        if (profile) {
-            if (profile.hero_title) document.getElementById('dyn-hero-title').innerHTML = profile.hero_title;
-            if (profile.hero_desc) document.getElementById('dyn-hero-desc').innerHTML = profile.hero_desc;
-            
-            if (profile.avatar_url) {
-                const img = document.getElementById('dyn-profile-img');
-                if (img) img.src = profile.avatar_url;
-            }
+        window.globalProfile = profile;
+        window.globalProjects = projects;
+        window.globalCerts = certs;
 
-            if (document.getElementById('dyn-stat-years')) document.getElementById('dyn-stat-years').innerText = profile.stat_years;
-            if (document.getElementById('dyn-stat-projects')) document.getElementById('dyn-stat-projects').innerText = profile.stat_projects;
-            if (document.getElementById('dyn-mission')) document.getElementById('dyn-mission').innerHTML = profile.about_mission;
-            if (document.getElementById('dyn-approach')) document.getElementById('dyn-approach').innerHTML = profile.about_desc;
+        window.renderDynamicSections = function() {
+            const lang = window.i18n ? window.i18n.current() : 'en';
             
-            // Update Roles (global variable)
-            if (profile.roles) {
-                roles = profile.roles.split(',').map(r => r.trim());
-            }
-
-            // Update Social Links
-            const updateLink = (id, url) => {
-                const el = document.getElementById(id);
-                if (el) {
-                    el.href = url !== '#' ? url : 'javascript:void(0)';
-                    if (url === '#') { el.style.display = 'none'; } else { el.style.display = ''; }
+            // Render Profile
+            if (window.globalProfile) {
+                const p = window.globalProfile;
+                if (document.getElementById('dyn-hero-title')) document.getElementById('dyn-hero-title').innerHTML = lang === 'en' ? (p.hero_title_en || p.hero_title_id || '') : (p.hero_title_id || p.hero_title_en || '');
+                if (document.getElementById('dyn-hero-desc')) document.getElementById('dyn-hero-desc').innerHTML = lang === 'en' ? (p.hero_desc_en || p.hero_desc_id || '') : (p.hero_desc_id || p.hero_desc_en || '');
+                if (document.getElementById('dyn-mission')) document.getElementById('dyn-mission').innerHTML = lang === 'en' ? (p.about_mission_en || p.about_mission_id || '') : (p.about_mission_id || p.about_mission_en || '');
+                if (document.getElementById('dyn-approach')) document.getElementById('dyn-approach').innerHTML = lang === 'en' ? (p.about_desc_en || p.about_desc_id || '') : (p.about_desc_id || p.about_desc_en || '');
+                
+                if (p.avatar_url) {
+                    const img = document.getElementById('dyn-profile-img');
+                    if (img) img.src = p.avatar_url;
                 }
-            };
-            
-            updateLink('profileGithub', profile.github);
-            updateLink('githubLink', profile.github);
-            updateLink('profileLinkedin', profile.linkedin);
-            updateLink('linkedinLink', profile.linkedin);
-            updateLink('igLink', profile.instagram);
-            updateLink('fbLink', profile.facebook);
-            
-            const waUrl = profile.whatsapp ? `https://wa.me/${profile.whatsapp}` : '#';
-            updateLink('navWaBtn', waUrl);
-            updateLink('heroWaBtn', waUrl);
-            updateLink('contactWaBtn', waUrl);
-            updateLink('footerWaLink', waUrl);
-            updateLink('floatingWaBtn', waUrl);
-            
-            const mailUrl = profile.email ? `mailto:${profile.email}` : '#';
-            updateLink('profileEmail', mailUrl);
-            
-            const emailBtn = document.getElementById('emailBtn');
-            if (emailBtn) emailBtn.href = mailUrl;
-        }
 
-        // Render Projects
-        const projectsGrid = document.getElementById('projectsGrid');
-        if (projectsGrid) {
-            projectsGrid.innerHTML = projects.map(p => {
-                const tagsHtml = p.tags.split(',').map(tag => `<span class="ptag">${tag.trim()}</span>`).join('');
-                return `
-                    <div class="project-card reveal">
-                      <div class="project-img-wrap">
-                        <div class="project-img-placeholder">
-                          ${p.image_url ? `<img src="${p.image_url}" alt="${p.title}" style="width:100%;height:100%;object-fit:cover;">` : `<div style="width:100%;height:100%;background:url('hero_bg.png') center/cover;opacity:0.8;"></div>`}
-                        </div>
-                      </div>
-                      <div class="project-info">
-                        <div class="project-tags">${tagsHtml}</div>
-                        <h3>${p.title}</h3>
-                        <p>${p.description}</p>
-                        <div class="project-footer">
-                          <span class="project-year">${p.year}</span>
-                          <div class="project-links">
-                            ${p.demo_link && p.demo_link !== '#' ? `<a href="${p.demo_link}" target="_blank" class="primary-link">Live Demo ↗</a>` : ''}
-                            ${p.github_link && p.github_link !== '#' ? `<a href="${p.github_link}" target="_blank" class="secondary-link">Source Code ↗</a>` : ''}
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                `;
-            }).join('');
-        }
+                if (document.getElementById('dyn-stat-years')) document.getElementById('dyn-stat-years').innerText = p.stat_years || '';
+                if (document.getElementById('dyn-stat-projects')) document.getElementById('dyn-stat-projects').innerText = p.stat_projects || '';
+                
+                // Update Roles (global variable)
+                const roleStr = lang === 'en' ? (p.roles_en || p.roles_id || '') : (p.roles_id || p.roles_en || '');
+                if (roleStr) {
+                    roles = roleStr.split(',').map(r => r.trim());
+                    if (window.__i18nRolesUpdate) window.__i18nRolesUpdate(roles);
+                }
 
-        // Render Certificates
-        const certsGrid = document.getElementById('certsGrid');
-        if (certsGrid) {
-            certsGrid.innerHTML = certs.map(c => {
-                const iconColor = c.category === 'programming' ? 'cert-icon-blue' : c.category === 'design' ? 'cert-icon-purple' : 'cert-icon-teal';
-                return `
-                    <div class="cert-card reveal" data-cat="${c.category}">
-                      <div class="cert-card-inner">
-                        <div class="cert-card-front">
-                          <div class="cert-ribbon">Verified</div>
-                          <div class="cert-icon-wrap">
-                            <div class="cert-icon ${iconColor}">
-                              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-                                <polyline points="16 18 22 12 16 6" /><polyline points="8 6 2 12 8 18" />
-                              </svg>
+                // Update Social Links
+                const updateLink = (id, url) => {
+                    const el = document.getElementById(id);
+                    if (el) {
+                        el.href = url !== '#' ? url : 'javascript:void(0)';
+                        if (url === '#') { el.style.display = 'none'; } else { el.style.display = ''; }
+                    }
+                };
+                
+                updateLink('profileGithub', p.github);
+                updateLink('githubLink', p.github);
+                updateLink('profileLinkedin', p.linkedin);
+                updateLink('linkedinLink', p.linkedin);
+                updateLink('igLink', p.instagram);
+                updateLink('fbLink', p.facebook);
+                
+                const waUrl = p.whatsapp ? `https://wa.me/${p.whatsapp}` : '#';
+                updateLink('navWaBtn', waUrl);
+                updateLink('heroWaBtn', waUrl);
+                updateLink('contactWaBtn', waUrl);
+                updateLink('footerWaLink', waUrl);
+                updateLink('floatingWaBtn', waUrl);
+                
+                const mailUrl = p.email ? `mailto:${p.email}` : '#';
+                updateLink('profileEmail', mailUrl);
+                
+                const emailBtn = document.getElementById('emailBtn');
+                if (emailBtn) emailBtn.href = mailUrl;
+            }
+
+            // Render Projects
+            const projectsGrid = document.getElementById('projectsGrid');
+            if (projectsGrid && window.globalProjects) {
+                projectsGrid.innerHTML = window.globalProjects.map(p => {
+                    const title = lang === 'en' ? (p.title_en || p.title_id || '') : (p.title_id || p.title_en || '');
+                    const desc = lang === 'en' ? (p.description_en || p.description_id || '') : (p.description_id || p.description_en || '');
+                    const tagsHtml = (p.tags||'').split(',').map(tag => `<span class="ptag">${tag.trim()}</span>`).join('');
+                    return `
+                        <div class="project-card reveal">
+                          <div class="project-img-wrap">
+                            <div class="project-img-placeholder">
+                              ${p.image_url ? `<img src="${p.image_url}" alt="${title}" style="width:100%;height:100%;object-fit:cover;">` : `<div style="width:100%;height:100%;background:url('hero_bg.png') center/cover;opacity:0.8;"></div>`}
                             </div>
                           </div>
-                          <div class="cert-body">
-                            <span class="cert-issuer">${c.issuer}</span>
-                            <h4 class="cert-title">${c.title}</h4>
-                            <div class="cert-meta">
-                              <span class="cert-date">
-                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                  <rect x="3" y="4" width="18" height="18" rx="2" /><path d="M16 2v4M8 2v4M3 10h18" />
-                                </svg>
-                                ${c.date}
-                              </span>
-                              <span class="cert-badge ${c.category}">${c.category.charAt(0).toUpperCase() + c.category.slice(1)}</span>
+                          <div class="project-info">
+                            <div class="project-tags">${tagsHtml}</div>
+                            <h3>${title}</h3>
+                            <p>${desc}</p>
+                            <div class="project-footer">
+                              <span class="project-year">${p.year}</span>
+                              <div class="project-links">
+                                ${p.demo_link && p.demo_link !== '#' ? `<a href="${p.demo_link}" target="_blank" class="primary-link">Live Demo ↗</a>` : ''}
+                                ${p.github_link && p.github_link !== '#' ? `<a href="${p.github_link}" target="_blank" class="secondary-link">Source Code ↗</a>` : ''}
+                              </div>
                             </div>
                           </div>
-                          <div class="cert-hover-hint">Klik untuk detail</div>
                         </div>
-                        <div class="cert-card-back">
-                          <h4>${c.title}</h4>
-                          <p>${c.description}</p>
-                          ${c.image_url ? `<img src="${c.image_url}" alt="${c.title}" style="width:100%; border-radius:4px; margin-top:8px; margin-bottom:8px;">` : ''}
-                          <div class="cert-back-meta">
-                            <span>Penerbit: ${c.issuer}</span>
-                            <span>Tanggal: ${c.date}</span>
+                    `;
+                }).join('');
+            }
+
+            // Render Certificates
+            const certsGrid = document.getElementById('certsGrid');
+            if (certsGrid && window.globalCerts) {
+                certsGrid.innerHTML = window.globalCerts.map(c => {
+                    const title = lang === 'en' ? (c.title_en || c.title_id || '') : (c.title_id || c.title_en || '');
+                    const desc = lang === 'en' ? (c.description_en || c.description_id || '') : (c.description_id || c.description_en || '');
+                    const iconColor = c.category === 'programming' ? 'cert-icon-blue' : c.category === 'design' ? 'cert-icon-purple' : 'cert-icon-teal';
+                    const categoryLabel = c.category ? c.category.charAt(0).toUpperCase() + c.category.slice(1) : '';
+                    
+                    return `
+                        <div class="cert-card reveal" data-cat="${c.category}">
+                          <div class="cert-card-inner">
+                            <div class="cert-card-front">
+                              <div class="cert-ribbon">Verified</div>
+                              <div class="cert-icon-wrap">
+                                <div class="cert-icon ${iconColor}">
+                                  <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                                    <polyline points="16 18 22 12 16 6" /><polyline points="8 6 2 12 8 18" />
+                                  </svg>
+                                </div>
+                              </div>
+                              <div class="cert-body">
+                                <span class="cert-issuer">${c.issuer}</span>
+                                <h4 class="cert-title">${title}</h4>
+                                <div class="cert-meta">
+                                  <span class="cert-date">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                      <rect x="3" y="4" width="18" height="18" rx="2" /><path d="M16 2v4M8 2v4M3 10h18" />
+                                    </svg>
+                                    ${c.date}
+                                  </span>
+                                  <span class="cert-badge ${c.category}">${categoryLabel}</span>
+                                </div>
+                              </div>
+                              <div class="cert-hover-hint">Klik untuk detail</div>
+                            </div>
+                            <div class="cert-card-back">
+                              <h4>${title}</h4>
+                              <p>${desc}</p>
+                              ${c.image_url ? `<img src="${c.image_url}" alt="${title}" style="width:100%; border-radius:4px; margin-top:8px; margin-bottom:8px;">` : ''}
+                              <div class="cert-back-meta">
+                                <span>Penerbit: ${c.issuer}</span>
+                                <span>Tanggal: ${c.date}</span>
+                              </div>
+                              ${c.verify_link && c.verify_link !== '#' ? `<a href="${c.verify_link}" target="_blank" class="cert-verify-btn">Verifikasi Sertifikat ↗</a>` : ''}
+                            </div>
                           </div>
-                          ${c.verify_link && c.verify_link !== '#' ? `<a href="${c.verify_link}" target="_blank" class="cert-verify-btn">Verifikasi Sertifikat ↗</a>` : ''}
                         </div>
-                      </div>
-                    </div>
-                `;
-            }).join('');
-        }
+                    `;
+                }).join('');
+            }
+        };
+
+        window.renderDynamicSections();
 
         // Render Now Focus Section
         window.renderNowSection = function() {
