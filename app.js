@@ -94,14 +94,6 @@
       filter_programming: 'Programming',
       filter_design: 'Design',
       filter_data: 'Data',
-      cert_click_detail: 'Click for details',
-      cert_issuer: 'Issuer',
-      cert_date: 'Date',
-      cert_verify: 'Verify Certificate ↗',
-
-      // Projects Dynamic
-      project_demo: 'Live Demo ↗',
-      project_source: 'Source Code ↗',
 
       // Now Page
       now_live_badge: 'Live & Updated',
@@ -249,19 +241,11 @@
 
       certs_tag: 'Pencapaian',
       certs_title: 'Sertifikat & Penghargaan',
-      certs_desc: 'Bukti komitmen saya untuk terus belajar dan meningkatkan kompetensi profesional.',
+      certs_desc: 'Bukti komitmen saya dalam terus belajar dan meningkatkan kompetensi profesional.',
       filter_all: 'Semua',
-      filter_programming: 'Pemrograman',
+      filter_programming: 'Programming',
       filter_design: 'Desain',
       filter_data: 'Data',
-      cert_click_detail: 'Klik untuk detail',
-      cert_issuer: 'Penerbit',
-      cert_date: 'Tanggal',
-      cert_verify: 'Verifikasi Sertifikat ↗',
-
-      // Projects Dynamic
-      project_demo: 'Live Demo ↗',
-      project_source: 'Source Code ↗',
 
       now_live_badge: 'Live & Diperbarui',
       now_live_aria: 'Live dan diperbarui',
@@ -968,8 +952,8 @@ async function fetchPortfolioData() {
             const projectsGrid = document.getElementById('projectsGrid');
             if (projectsGrid && window.globalProjects) {
                 projectsGrid.innerHTML = window.globalProjects.map(p => {
-                    const title = p.title_id || '';
-                    const desc = p.description_id || '';
+                    const title = lang === 'en' ? (p.title_en || p.title_id || '') : (p.title_id || p.title_en || '');
+                    const desc = lang === 'en' ? (p.description_en || p.description_id || '') : (p.description_id || p.description_en || '');
                     const tagsHtml = (p.tags||'').split(',').map(tag => `<span class="ptag">${tag.trim()}</span>`).join('');
                     return `
                         <div class="project-card reveal">
@@ -999,8 +983,8 @@ async function fetchPortfolioData() {
             const certsGrid = document.getElementById('certsGrid');
             if (certsGrid && window.globalCerts) {
                 certsGrid.innerHTML = window.globalCerts.map(c => {
-                    const title = c.title_id || '';
-                    const desc = c.description_id || '';
+                    const title = lang === 'en' ? (c.title_en || c.title_id || '') : (c.title_id || c.title_en || '');
+                    const desc = lang === 'en' ? (c.description_en || c.description_id || '') : (c.description_id || c.description_en || '');
                     const iconColor = c.category === 'programming' ? 'cert-icon-blue' : c.category === 'design' ? 'cert-icon-purple' : 'cert-icon-teal';
                     const categoryLabel = c.category ? c.category.charAt(0).toUpperCase() + c.category.slice(1) : '';
                     
@@ -1080,15 +1064,12 @@ async function fetchPortfolioData() {
             if (nowGrid) {
                 const cards = data.filter(d => d.type !== 'milestone');
                 nowGrid.innerHTML = cards.map(c => {
-                    const title = c.title_id;
-                    const badge = c.badge_id;
-                    const desc = c.desc_id;
-                    const metaLabel = c.meta_label_id;
-                    const metaValue = c.meta_value_id;
-                    let items = c.items_id || [];
-                    if (typeof items === 'string') {
-                        try { items = JSON.parse(items); } catch(e) { items = items.split(',').map(s => s.trim()); }
-                    }
+                    const title = lang === 'en' ? c.title_en : c.title_id;
+                    const badge = lang === 'en' ? c.badge_en : c.badge_id;
+                    const desc = lang === 'en' ? c.desc_en : c.desc_id;
+                    const metaLabel = lang === 'en' ? c.meta_label_en : c.meta_label_id;
+                    const metaValue = lang === 'en' ? c.meta_value_en : c.meta_value_id;
+                    const items = lang === 'en' ? (c.items_en || []) : (c.items_id || []);
                     
                     let cardClass, iconSvg, iconWrapClass;
                     if (c.type === 'project') {

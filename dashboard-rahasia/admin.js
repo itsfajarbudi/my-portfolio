@@ -1,8 +1,20 @@
-const supabaseUrl = 'https://pommiyqbrpuboehojryu.supabase.co';
-const supabaseKey = 'sb_publishable_g9SRDW_5cJ2-aVeItpMtKw_huzMtgaV';
-const supabaseClient = window.supabase.createClient(supabaseUrl, supabaseKey);
+const supabaseUrl = window.supabaseUrl;
+const supabaseKey = window.supabaseKey;
+const supabaseClient = window.supabaseClient;
 
-
+// --- AUTO TRANSLATION HELPER ---
+async function autoTranslate(text) {
+    if (!text || text.trim() === '') return '';
+    try {
+        const res = await fetch('https://translate.googleapis.com/translate_a/single?client=gtx&sl=id&tl=en&dt=t&q=' + encodeURIComponent(text));
+        const data = await res.json();
+        return data[0].map(x => x[0]).join('');
+    } catch (e) {
+        console.error('Translation error:', e);
+        return text; // fallback to original text if translation fails
+    }
+}
+// --------------------------------
 
 // ======================
 // UPLOAD HELPER
@@ -103,21 +115,16 @@ if (forgotPasswordLink) {
         errorMsg.textContent = 'Mengirim email reset password...';
         errorMsg.style.color = 'var(--text-secondary)';
 
-        try {
-            const { data, error } = await supabaseClient.auth.resetPasswordForEmail(email, {
-                redirectTo: window.location.href,
-            });
+        const { data, error } = await supabaseClient.auth.resetPasswordForEmail(email, {
+            redirectTo: window.location.href, // Redirect back to this page after reset
+        });
 
-            if (error) {
-                throw error;
-            } else {
-                errorMsg.textContent = 'Link reset password telah dikirim ke email Anda! Silakan cek inbox/spam.';
-                errorMsg.style.color = '#4caf50';
-            }
-        } catch (err) {
-            errorMsg.textContent = 'Gagal: ' + (err.message || 'Terjadi kesalahan sistem.');
+        if (error) {
+            errorMsg.textContent = 'Gagal mengirim email reset: ' + error.message;
             errorMsg.style.color = '#f44336';
-            console.error(err);
+        } else {
+            errorMsg.textContent = 'Link reset password telah dikirim ke email Anda! Silakan cek inbox/spam.';
+            errorMsg.style.color = '#4caf50'; // Green success color
         }
     });
 }
@@ -189,23 +196,27 @@ document.getElementById('profileForm').addEventListener('submit', async (e) => {
             }
         }
 
-        submitBtn.textContent = 'Menyimpan...';
+        submitBtn.textContent = 'Menerjemahkan & Menyimpan...';
         
-        
-        
-        
-        
-        
+        document.getElementById('profHeroTitleEn').value = await autoTranslate(document.getElementById('profHeroTitleId').value);
+        document.getElementById('profRolesEn').value = await autoTranslate(document.getElementById('profRolesId').value);
+        document.getElementById('profHeroDescEn').value = await autoTranslate(document.getElementById('profHeroDescId').value);
+        document.getElementById('profMissionEn').value = await autoTranslate(document.getElementById('profMissionId').value);
+        document.getElementById('profApproachEn').value = await autoTranslate(document.getElementById('profApproachId').value);
 
         const body = {
             hero_title_id: document.getElementById('profHeroTitleId').value,
+            hero_title_en: document.getElementById('profHeroTitleEn').value,
             roles_id: document.getElementById('profRolesId').value,
+            roles_en: document.getElementById('profRolesEn').value,
             hero_desc_id: document.getElementById('profHeroDescId').value,
-            hero_
+            hero_desc_en: document.getElementById('profHeroDescEn').value,
             stat_years: document.getElementById('profStatYears').value,
             stat_projects: document.getElementById('profStatProjects').value,
             about_mission_id: document.getElementById('profMissionId').value,
+            about_mission_en: document.getElementById('profMissionEn').value,
             about_desc_id: document.getElementById('profApproachId').value,
+            about_desc_en: document.getElementById('profApproachEn').value,
             whatsapp: document.getElementById('profWa').value,
             email: document.getElementById('profEmail').value,
             github: document.getElementById('profGithub').value,
@@ -365,15 +376,17 @@ document.getElementById('projectForm').addEventListener('submit', async (e) => {
             }
         }
         
-        submitBtn.textContent = 'Menyimpan...';
-        
-        
+        submitBtn.textContent = 'Menerjemahkan...';
+        document.getElementById('projectTitleEn').value = await autoTranslate(document.getElementById('projectTitleId').value);
+        document.getElementById('projectDescEn').value = await autoTranslate(document.getElementById('projectDescId').value);
 
         const body = {
             title_id: document.getElementById('projectTitleId').value,
+            title_en: document.getElementById('projectTitleEn').value,
             year: document.getElementById('projectYear').value,
             tags: document.getElementById('projectTags').value,
             description_id: document.getElementById('projectDescId').value,
+            description_en: document.getElementById('projectDescEn').value,
             image_url: imageUrl,
             demo_link: document.getElementById('projectDemo').value,
             github_link: document.getElementById('projectGithub').value
@@ -496,16 +509,18 @@ document.getElementById('certForm').addEventListener('submit', async (e) => {
             }
         }
         
-        submitBtn.textContent = 'Menyimpan...';
-        
-        
+        submitBtn.textContent = 'Menerjemahkan...';
+        document.getElementById('certTitleEn').value = await autoTranslate(document.getElementById('certTitleId').value);
+        document.getElementById('certDescEn').value = await autoTranslate(document.getElementById('certDescId').value);
 
         const body = {
             title_id: document.getElementById('certTitleId').value,
+            title_en: document.getElementById('certTitleEn').value,
             issuer: document.getElementById('certIssuer').value,
             category: document.getElementById('certCategory').value,
             date: document.getElementById('certDate').value,
             description_id: document.getElementById('certDescId').value,
+            description_en: document.getElementById('certDescEn').value,
             verify_link: document.getElementById('certVerifyLink').value,
             image_url: imageUrl
         };
@@ -639,19 +654,25 @@ document.getElementById('nowForm').addEventListener('submit', async (e) => {
 
         const isEdit = document.getElementById('nowId').value !== '';
         
-        submitBtn.textContent = 'Menyimpan...';
-        
-        
-        
-        
-        
-        
+        submitBtn.textContent = 'Menerjemahkan...';
+        document.getElementById('nowTitleEn').value = await autoTranslate(document.getElementById('nowTitleId').value);
+        document.getElementById('nowDescEn').value = await autoTranslate(document.getElementById('nowDescId').value);
+        document.getElementById('nowBadgeEn').value = await autoTranslate(document.getElementById('nowBadgeId').value);
+        document.getElementById('nowMetaLabelEn').value = await autoTranslate(document.getElementById('nowMetaLabelId').value);
+        document.getElementById('nowMetaValueEn').value = await autoTranslate(document.getElementById('nowMetaValueId').value);
+        document.getElementById('nowItemsEn').value = document.getElementById('nowItemsId').value;
 
         // Helper to parse comma separated string to JSON array
         const parseItems = (str) => str ? str.split(',').map(s => s.trim()).filter(s => s) : [];
 
         const body = {
             type: document.getElementById('nowType').value,
+            badge_en: document.getElementById('nowBadgeEn').value,
+            title_en: document.getElementById('nowTitleEn').value,
+            desc_en: document.getElementById('nowDescEn').value,
+            meta_label_en: document.getElementById('nowMetaLabelEn').value,
+            meta_value_en: document.getElementById('nowMetaValueEn').value,
+            items_en: parseItems(document.getElementById('nowItemsEn').value),
             
             badge_id: document.getElementById('nowBadgeId').value,
             title_id: document.getElementById('nowTitleId').value,
