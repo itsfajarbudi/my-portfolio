@@ -1030,6 +1030,12 @@ async function fetchPortfolioData() {
                     `;
                 }).join('');
             }
+            
+            // Re-observe newly created reveal elements
+            if (typeof revealObserver !== 'undefined') {
+                const newReveals = document.querySelectorAll('#projectsGrid .reveal, #certsGrid .reveal');
+                newReveals.forEach(el => revealObserver.observe(el));
+            }
         };
 
         window.renderDynamicSections();
@@ -1170,6 +1176,12 @@ async function fetchPortfolioData() {
                       </div>
                     `;
                 }).join('');
+            }
+            
+            // Re-observe newly created reveal elements
+            if (typeof revealObserver !== 'undefined') {
+                const newReveals = document.querySelectorAll('#nowFocusGrid .reveal, #nowTimelineList .reveal');
+                newReveals.forEach(el => revealObserver.observe(el));
             }
         };
 
