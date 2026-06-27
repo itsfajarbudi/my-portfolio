@@ -115,16 +115,21 @@ if (forgotPasswordLink) {
         errorMsg.textContent = 'Mengirim email reset password...';
         errorMsg.style.color = 'var(--text-secondary)';
 
-        const { data, error } = await supabaseClient.auth.resetPasswordForEmail(email, {
-            redirectTo: window.location.href, // Redirect back to this page after reset
-        });
+        try {
+            const { data, error } = await supabaseClient.auth.resetPasswordForEmail(email, {
+                redirectTo: window.location.href,
+            });
 
-        if (error) {
-            errorMsg.textContent = 'Gagal mengirim email reset: ' + error.message;
+            if (error) {
+                throw error;
+            } else {
+                errorMsg.textContent = 'Link reset password telah dikirim ke email Anda! Silakan cek inbox/spam.';
+                errorMsg.style.color = '#4caf50';
+            }
+        } catch (err) {
+            errorMsg.textContent = 'Gagal: ' + (err.message || 'Terjadi kesalahan sistem.');
             errorMsg.style.color = '#f44336';
-        } else {
-            errorMsg.textContent = 'Link reset password telah dikirim ke email Anda! Silakan cek inbox/spam.';
-            errorMsg.style.color = '#4caf50'; // Green success color
+            console.error(err);
         }
     });
 }
