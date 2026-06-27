@@ -870,11 +870,13 @@ const supabaseKey = 'sb_publishable_g9SRDW_5cJ2-aVeItpMtKw_huzMtgaV';
 const supabaseClient = window.supabase.createClient(supabaseUrl, supabaseKey);
 async function fetchPortfolioData() {
     try {
+        const safeFetch = (promise) => promise.then(res => res).catch(err => ({ error: err, data: null }));
+
         const [projRes, certRes, profRes, nowRes] = await Promise.all([
-            supabaseClient.from('projects').select('*').order('created_at', { ascending: false }),
-            supabaseClient.from('certificates').select('*').order('created_at', { ascending: false }),
-            supabaseClient.from('profile').select('*').eq('id', 1).single(),
-            supabaseClient.from('now_focus').select('*').order('sort_order', { ascending: true })
+            safeFetch(supabaseClient.from('projects').select('*').order('created_at', { ascending: false })),
+            safeFetch(supabaseClient.from('certificates').select('*').order('created_at', { ascending: false })),
+            safeFetch(supabaseClient.from('profile').select('*').eq('id', 1).single()),
+            safeFetch(supabaseClient.from('now_focus').select('*').order('sort_order', { ascending: true }))
         ]);
         
         const projects = projRes.data || [];
