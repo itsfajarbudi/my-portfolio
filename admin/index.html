@@ -40,6 +40,7 @@
             <aside class="sidebar">
                 <button class="nav-btn active" data-target="projects-view">Kelola Proyek</button>
                 <button class="nav-btn" data-target="certificates-view">Kelola Sertifikat</button>
+                <button class="nav-btn" data-target="now-view">Kelola Now Page</button>
                 <button class="nav-btn" data-target="profile-view">Profil & Pengaturan</button>
                 <a href="/" target="_blank" class="nav-link">Lihat Website ↗</a>
             </aside>
@@ -164,6 +165,30 @@
                     </form>
                 </section>
 
+                <!-- Now Page View -->
+                <section id="now-view" class="content-section hidden">
+                    <div class="section-header">
+                        <h2>Daftar Now Page Focus</h2>
+                        <button class="btn btn-primary" onclick="showNowModal()">+ Tambah Item</button>
+                    </div>
+                    <div class="table-responsive">
+                        <table id="nowTable">
+                            <thead>
+                                <tr>
+                                    <th>Tipe</th>
+                                    <th>Judul (EN)</th>
+                                    <th>Status (EN)</th>
+                                    <th>Urutan</th>
+                                    <th>Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Data will be injected here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
             </main>
         </div>
     </div>
@@ -244,8 +269,87 @@
                     <label>Link Verifikasi</label>
                     <input type="url" id="certLink">
                 </div>
-                <div class="modal-actions">
-                    <button type="button" class="btn btn-outline" onclick="closeModal('certModal')">Batal</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal Now Item -->
+    <div id="nowModal" class="modal">
+        <div class="modal-content" style="max-height: 90vh; overflow-y: auto;">
+            <h3 id="nowModalTitle">Tambah Item Now</h3>
+            <form id="nowForm">
+                <input type="hidden" id="nowId">
+                <div class="form-group">
+                    <label>Tipe Kartu</label>
+                    <select id="nowType" required>
+                        <option value="project">Project (Biru, Ikon Petir)</option>
+                        <option value="learning">Learning (Ungu, Ikon Buku)</option>
+                        <option value="milestone">Milestone (Hijau, Timeline)</option>
+                        <option value="reading">Reading/Cert (Oranye)</option>
+                    </select>
+                </div>
+                
+                <h4 style="margin-top:1.5rem; margin-bottom:0.5rem;">Data Bahasa Inggris (EN)</h4>
+                <div class="form-group">
+                    <label>Status / Badge (EN)</label>
+                    <input type="text" id="nowBadgeEn" placeholder="e.g. In Progress">
+                </div>
+                <div class="form-group">
+                    <label>Judul (EN)</label>
+                    <input type="text" id="nowTitleEn" required>
+                </div>
+                <div class="form-group">
+                    <label>Deskripsi (EN)</label>
+                    <textarea id="nowDescEn" rows="3"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Meta Label (EN) - Opsional</label>
+                    <input type="text" id="nowMetaLabelEn" placeholder="e.g. Impact">
+                </div>
+                <div class="form-group">
+                    <label>Meta Value (EN) - Opsional</label>
+                    <input type="text" id="nowMetaValueEn" placeholder="e.g. Serves 50+ clients">
+                </div>
+                <div class="form-group">
+                    <label>Items (EN) - Pisahkan dengan koma</label>
+                    <textarea id="nowItemsEn" rows="2" placeholder="e.g. Node.js, Kubernetes, React"></textarea>
+                </div>
+
+                <h4 style="margin-top:1.5rem; margin-bottom:0.5rem;">Data Bahasa Indonesia (ID)</h4>
+                <div class="form-group">
+                    <label>Status / Badge (ID)</label>
+                    <input type="text" id="nowBadgeId" placeholder="e.g. Sedang Berjalan">
+                </div>
+                <div class="form-group">
+                    <label>Judul (ID)</label>
+                    <input type="text" id="nowTitleId" required>
+                </div>
+                <div class="form-group">
+                    <label>Deskripsi (ID)</label>
+                    <textarea id="nowDescId" rows="3"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Meta Label (ID) - Opsional</label>
+                    <input type="text" id="nowMetaLabelId" placeholder="e.g. Dampak">
+                </div>
+                <div class="form-group">
+                    <label>Meta Value (ID) - Opsional</label>
+                    <input type="text" id="nowMetaValueId" placeholder="e.g. Melayani 50+ klien">
+                </div>
+                <div class="form-group">
+                    <label>Items (ID) - Pisahkan dengan koma</label>
+                    <textarea id="nowItemsId" rows="2" placeholder="e.g. Node.js, Kubernetes, React"></textarea>
+                </div>
+
+                <h4 style="margin-top:1.5rem; margin-bottom:0.5rem;">Pengaturan</h4>
+                <div class="form-group">
+                    <label>Urutan Tampil (Angka kecil tampil duluan)</label>
+                    <input type="number" id="nowSortOrder" value="0" required>
+                </div>
+
+                <div class="modal-actions" style="margin-top: 2rem;">
+                    <button type="button" class="btn btn-outline" onclick="closeModal('nowModal')">Batal</button>
                     <button type="submit" class="btn btn-primary">Simpan</button>
                 </div>
             </form>

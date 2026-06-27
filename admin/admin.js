@@ -72,6 +72,7 @@ function showDashboard() {
     dashboardScreen.classList.remove('hidden');
     loadProjects();
     loadCertificates();
+    loadNowItems();
     loadProfile();
 }
 
@@ -283,6 +284,111 @@ async function deleteCert(id) {
     }
 }
 
+// ======================
+// NOW PAGE ITEMS
+// ======================
+let nowData = [];
+
+async function loadNowItems() {
+    const { data } = await supabaseClient.from('now_focus').select('*').order('sort_order', { ascending: true });
+    nowData = data || [];
+    renderNowItems();
+}
+
+function renderNowItems() {
+    const tbody = document.querySelector('#nowTable tbody');
+    tbody.innerHTML = '';
+    nowData.forEach(item => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+            <td><span style="text-transform: capitalize; background: #e0e7ff; color: #3730a3; padding: 4px 8px; border-radius: 4px; font-size: 0.85rem;">${item.type}</span></td>
+            <td>${item.title_en}</td>
+            <td>${item.badge_en || '-'}</td>
+            <td>${item.sort_order}</td>
+            <td class="action-cell">
+                <button class="btn btn-edit" onclick="editNow(${item.id})">Edit</button>
+                <button class="btn btn-danger" onclick="deleteNow(${item.id})">Hapus</button>
+            </td>
+        `;
+        tbody.appendChild(tr);
+    });
+}
+
+function showNowModal(id = null) {
+    document.getElementById('nowForm').reset();
+    document.getElementById('nowId').value = '';
+    document.getElementById('nowModalTitle').textContent = 'Tambah Item Now';
+    
+    if (id) {
+        const item = nowData.find(x => x.id === id);
+        if (item) {
+            document.getElementById('nowId').value = item.id;
+            document.getElementById('nowType').value = item.type;
+            
+            document.getElementById('nowBadgeEn').value = item.badge_en || '';
+            document.getElementById('nowTitleEn').value = item.title_en || '';
+            document.getElementById('nowDescEn').value = item.desc_en || '';
+            document.getElementById('nowMetaLabelEn').value = item.meta_label_en || '';
+            document.getElementById('nowMetaValueEn').value = item.meta_value_en || '';
+            document.getElementById('nowItemsEn').value = (item.items_en || []).join(', ');
+            
+            document.getElementById('nowBadgeId').value = item.badge_id || '';
+            document.getElementById('nowTitleId').value = item.title_id || '';
+            document.getElementById('nowDescId').value = item.desc_id || '';
+            document.getElementById('nowMetaLabelId').value = item.meta_label_id || '';
+            document.getElementById('nowMetaValueId').value = item.meta_value_id || '';
+            document.getElementById('nowItemsId').value = (item.items_id || []).join(', ');
+            
+            document.getElementById('nowSortOrder').value = item.sort_order || 0;
+            
+            document.getElementById('nowModalTitle').textContent = 'Edit Item Now';
+        }
+    }
+    document.getElementById('nowModal').classList.add('show');
+}
+
+document.getElementById('nowForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const id = document.getElementById('nowId').value;
+    
+    // Helper to parse comma separated string to JSON array
+    const parseItems = (str) => str ? str.split(',').map(s => s.trim()).filter(s => s) : [];
+
+    const body = {
+        type: document.getElementById('nowType').value,
+        badge_en: document.getElementById('nowBadgeEn').value,
+        title_en: document.getElementById('nowTitleEn').value,
+        desc_en: document.getElementById('nowDescEn').value,
+        meta_label_en: document.getElementById('nowMetaLabelEn').value,
+        meta_value_en: document.getElementById('nowMetaValueEn').value,
+        items_en: parseItems(document.getElementById('nowItemsEn').value),
+        
+        badge_id: document.getElementById('nowBadgeId').value,
+        title_id: document.getElementById('nowTitleId').value,
+        desc_id: document.getElementById('nowDescId').value,
+        meta_label_id: document.getElementById('nowMetaLabelId').value,
+        meta_value_id: document.getElementById('nowMetaValueId').value,
+        items_id: parseItems(document.getElementById('nowItemsId').value),
+        
+        sort_order: parseInt(document.getElementById('nowSortOrder').value) || 0
+    };
+
+    if (id) {
+        await supabaseClient.from('now_focus').update(body).eq('id', id);
+    } else {
+        await supabaseClient.from('now_focus').insert([body]);
+    }
+    closeModal('nowModal');
+    loadNowItems();
+});
+
+async function deleteNow(id) {
+    if (confirm('Yakin ingin menghapus item Now ini?')) {
+        await supabaseClient.from('now_focus').delete().eq('id', id);
+        loadNowItems();
+    }
+}
+
 // Utils
 function closeModal(id) {
     document.getElementById(id).classList.remove('show');
@@ -290,6 +396,7 @@ function closeModal(id) {
 
 function editProject(id) { showProjectModal(id); }
 function editCert(id) { showCertModal(id); }
+function editNow(id) { showNowModal(id); }
 
 // Initialize
 init();
