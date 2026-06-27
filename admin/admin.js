@@ -217,8 +217,18 @@ function showProjectModal(id = null) {
     document.getElementById('projectId').value = '';
     document.getElementById('projectModalTitle').textContent = 'Tambah Proyek';
     
+    const preview = document.getElementById('projectImagePreview');
+    if (preview) {
+        preview.src = '';
+        preview.style.display = 'none';
+    }
+    const fileInput = document.getElementById('projectImageFile');
+    if (fileInput) {
+        delete fileInput.dataset.existingUrl;
+    }
+    
     if (id) {
-        const p = projectsData.find(x => x.id === id);
+        const p = projectsData.find(x => x.id == id);
         if (p) {
             document.getElementById('projectId').value = p.id;
             document.getElementById('projectTitle').value = p.title;
@@ -329,8 +339,18 @@ function showCertModal(id = null) {
     document.getElementById('certId').value = '';
     document.getElementById('certModalTitle').textContent = 'Tambah Sertifikat';
     
+    const preview = document.getElementById('certImagePreview');
+    if (preview) {
+        preview.src = '';
+        preview.style.display = 'none';
+    }
+    const fileInput = document.getElementById('certImageFile');
+    if (fileInput) {
+        delete fileInput.dataset.existingUrl;
+    }
+    
     if (id) {
-        const c = certsData.find(x => x.id === id);
+        const c = certsData.find(x => x.id == id);
         if (c) {
             document.getElementById('certId').value = c.id;
             document.getElementById('certTitle').value = c.title;
@@ -440,8 +460,18 @@ function showNowModal(id = null) {
     document.getElementById('nowId').value = '';
     document.getElementById('nowModalTitle').textContent = 'Tambah Item Now';
     
+    const preview = document.getElementById('nowImagePreview');
+    if (preview) {
+        preview.src = '';
+        preview.style.display = 'none';
+    }
+    const fileInput = document.getElementById('nowImageFile');
+    if (fileInput) {
+        delete fileInput.dataset.existingUrl;
+    }
+    
     if (id) {
-        const item = nowData.find(x => x.id === id);
+        const item = nowData.find(x => x.id == id);
         if (item) {
             document.getElementById('nowId').value = item.id;
             document.getElementById('nowType').value = item.type;
