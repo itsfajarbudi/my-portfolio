@@ -882,7 +882,7 @@ async function fetchPortfolioData() {
         const safeFetch = (promise) => promise.then(res => res).catch(err => ({ error: err, data: null }));
 
         const [projRes, certRes, profRes, nowRes] = await Promise.all([
-            safeFetch(supabaseClient.from('projects').select('*').order('created_at', { ascending: false })),
+            safeFetch(supabaseClient.from('projects').select('*').order('sort_order', { ascending: true })),
             safeFetch(supabaseClient.from('certificates').select('*').order('created_at', { ascending: false })),
             safeFetch(supabaseClient.from('profile').select('*').eq('id', 1).single()),
             safeFetch(supabaseClient.from('now_focus').select('*').order('sort_order', { ascending: true }))

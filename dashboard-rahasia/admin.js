@@ -283,9 +283,10 @@ if (changePasswordForm) {
 // PROJECTS
 // ======================
 let projectsData = [];
+let draggedRow = null;
 
 async function loadProjects() {
-    const { data } = await supabaseClient.from('projects').select('*').order('created_at', { ascending: false });
+    const { data } = await supabaseClient.from('projects').select('*').order('sort_order', { ascending: true });
     projectsData = data || [];
     renderProjects();
 }
@@ -293,10 +294,23 @@ async function loadProjects() {
 function renderProjects() {
     const tbody = document.querySelector('#projectsTable tbody');
     tbody.innerHTML = '';
-    projectsData.forEach(p => {
+    
+    // Urutkan data proyek berdasarkan sort_order menaik
+    projectsData.sort((a, b) => {
+        const orderA = a.sort_order !== null && a.sort_order !== undefined ? a.sort_order : 999999;
+        const orderB = b.sort_order !== null && b.sort_order !== undefined ? b.sort_order : 999999;
+        if (orderA !== orderB) return orderA - orderB;
+        return a.id - b.id; // fallback ke id jika sort_order sama
+    });
+
+    projectsData.forEach((p, index) => {
         const tr = document.createElement('tr');
+        tr.draggable = true;
+        tr.dataset.id = p.id;
+        tr.dataset.index = index;
+        
         tr.innerHTML = `
-            <td>${p.title_id || p.title_en || '-'}</td>
+            <td class="drag-handle"><span style="color: #94a3b8; margin-right: 8px;">☰</span> ${p.title_id || p.title_en || '-'}</td>
             <td>${p.year}</td>
             <td>${p.tags}</td>
             <td class="action-cell">
@@ -304,8 +318,62 @@ function renderProjects() {
                 <button class="btn btn-danger" onclick="deleteProject(${p.id})">Hapus</button>
             </td>
         `;
+
+        // Event Drag and Drop
+        tr.addEventListener('dragstart', (e) => {
+            draggedRow = tr;
+            tr.classList.add('dragging');
+            e.dataTransfer.effectAllowed = 'move';
+        });
+
+        tr.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            const target = e.target.closest('tr');
+            if (target && target !== draggedRow) {
+                const bounding = target.getBoundingClientRect();
+                const offset = e.clientY - bounding.top;
+                if (offset > bounding.height / 2) {
+                    target.after(draggedRow);
+                } else {
+                    target.before(draggedRow);
+                }
+            }
+        });
+
+        tr.addEventListener('dragend', async () => {
+            tr.classList.remove('dragging');
+            
+            // Dapatkan urutan baru dari DOM
+            const rows = Array.from(tbody.querySelectorAll('tr'));
+            const updates = rows.map((row, idx) => {
+                const id = parseInt(row.dataset.id);
+                // Update memori lokal
+                const proj = projectsData.find(x => x.id === id);
+                if (proj) proj.sort_order = idx;
+                return { id, sort_order: idx };
+            });
+
+            await updateProjectsOrder(updates);
+        });
+
         tbody.appendChild(tr);
     });
+}
+
+async function updateProjectsOrder(updates) {
+    try {
+        const promises = updates.map(u => 
+            supabaseClient.from('projects').update({ sort_order: u.sort_order }).eq('id', u.id)
+        );
+        const results = await Promise.all(promises);
+        const error = results.find(r => r.error);
+        if (error) throw error.error;
+        console.log('Urutan proyek berhasil disimpan.');
+    } catch (e) {
+        console.error('Gagal memperbarui urutan proyek:', e);
+        alert('Gagal memperbarui urutan proyek: ' + e.message);
+        loadProjects(); // reload untuk mengembalikan posisi asli
+    }
 }
 
 function showProjectModal(id = null) {
@@ -395,6 +463,12 @@ document.getElementById('projectForm').addEventListener('submit', async (e) => {
         if (id) {
             await supabaseClient.from('projects').update(body).eq('id', id);
         } else {
+            // Hitung sort_order untuk diletakkan di urutan paling bawah
+            let maxOrder = 0;
+            if (projectsData.length > 0) {
+                maxOrder = Math.max(...projectsData.map(p => p.sort_order || 0));
+            }
+            body.sort_order = maxOrder + 1;
             await supabaseClient.from('projects').insert([body]);
         }
         closeModal('projectModal');

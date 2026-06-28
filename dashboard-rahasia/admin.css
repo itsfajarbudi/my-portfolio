@@ -213,3 +213,17 @@ th { font-weight: 600; color: var(--text-muted); background: var(--bg); }
     gap: 1rem;
     margin-top: 1.5rem;
 }
+
+/* Indikator baris yang sedang di-drag */
+tr.dragging {
+    opacity: 0.5;
+    background-color: var(--border) !important;
+    border: 2px dashed var(--primary);
+}
+
+/* Kursor drag handle di kolom judul */
+.drag-handle {
+    cursor: move;
+    user-select: none;
+}
+
