@@ -319,7 +319,11 @@
     },
   };
 
-  let currentLang = localStorage.getItem('portfolio_lang') || 'en';
+  // Bahasa Indonesia adalah satu-satunya bahasa — hapus preferensi lama jika ada 'en'
+  if (localStorage.getItem('portfolio_lang') === 'en') {
+    localStorage.removeItem('portfolio_lang');
+  }
+  let currentLang = localStorage.getItem('portfolio_lang') || 'id';
 
   function applyTranslations(lang) {
     const t = TRANSLATIONS[lang];
@@ -614,8 +618,8 @@ function updateActiveNav() {
 let roles = [
   'Web Developer',
   'UI/UX Enthusiast',
-  'Python Programmer',
-  'Data Analyst',
+  'Programmer Python',
+  'Analis Data',
   'Problem Solver',
 ];
 let rIdx = 0, cIdx = 0, deleting = false;
@@ -824,6 +828,7 @@ if (heroStats) statsObserver.observe(heroStats);
 // ==========================================
 const floatingWa = document.getElementById('floatingWaBtn');
 window.addEventListener('scroll', () => {
+  if (!floatingWa) return;
   floatingWa.style.transform = window.scrollY > 300
     ? 'scale(1)'
     : 'scale(0.8)';
@@ -1088,10 +1093,6 @@ async function fetchPortfolioData() {
                         innerContent += `<img src="${c.image_url}" alt="Attachment" style="width:100%; border-radius:6px; margin-bottom:1rem; border: 1px solid var(--border-color);">`;
                     }
                     if (c.type === 'project') {
-                        innerContent += `<p>${desc}</p>`;
-                        if (items.length) {
-                            innerContent += `<div class="now-tags">${items.map(t => `<span>${t}</span>`).join('')}</div>`;
-                        }
                         innerContent += `
                           ${metaLabel ? `<div class="now-card-meta"><span class="now-meta-label">${metaLabel}</span><p class="now-meta-value">${metaValue}</p></div>` : ''}
                           <div class="now-stack-badges">

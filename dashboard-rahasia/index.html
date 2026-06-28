@@ -427,6 +427,12 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        // Inisialisasi Supabase Client untuk Admin Dashboard
+        window.supabaseUrl = 'https://pommiyqbrpuboehojryu.supabase.co';
+        window.supabaseKey = 'sb_publishable_g9SRDW_5cJ2-aVeItpMtKw_huzMtgaV';
+        window.supabaseClient = window.supabase.createClient(window.supabaseUrl, window.supabaseKey);
+    </script>
     <script src="admin.js"></script>
 </body>
 </html>
