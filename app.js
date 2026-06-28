@@ -927,8 +927,8 @@ async function fetchPortfolioData() {
                 // Update Roles (global variable)
                 const roleStr = lang === 'en' ? (p.roles_en || p.roles_id || '') : (p.roles_id || p.roles_en || '');
                 if (roleStr) {
-                    roles = roleStr.split(',').map(r => r.trim());
-                    if (window.__i18nRolesUpdate) window.__i18nRolesUpdate(roles);
+                    const parsedRoles = roleStr.split(',').map(r => r.trim());
+                    if (window.__i18nRolesUpdate) window.__i18nRolesUpdate(parsedRoles);
                 }
 
                 // Update Social Links
