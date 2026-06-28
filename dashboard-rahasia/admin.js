@@ -286,8 +286,14 @@ let projectsData = [];
 let draggedRow = null;
 
 async function loadProjects() {
-    const { data } = await supabaseClient.from('projects').select('*').order('sort_order', { ascending: true });
-    projectsData = data || [];
+    let response = await supabaseClient.from('projects').select('*').order('sort_order', { ascending: true });
+    
+    // Jika kolom sort_order belum ada, fallback ke created_at
+    if (response.error && response.error.code === '42703') {
+        response = await supabaseClient.from('projects').select('*').order('created_at', { ascending: false });
+    }
+    
+    projectsData = response.data || [];
     renderProjects();
 }
 
