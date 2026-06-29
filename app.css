@@ -1002,10 +1002,12 @@ img {
   flex-direction: column;
 }
 
-.project-card:hover {
-  transform: translateY(-4px);
-  box-shadow: var(--shadow-xl);
-  border-color: var(--light-blue-200);
+@media (hover: hover) {
+  .project-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-xl);
+    border-color: var(--light-blue-200);
+  }
 }
 
 .project-card.featured-project {
@@ -1104,6 +1106,8 @@ img {
 .project-links {
   display: flex;
   gap: 10px;
+  position: relative;
+  z-index: 10;
 }
 
 .project-links a {
@@ -1115,6 +1119,9 @@ img {
   align-items: center;
   text-decoration: none;
   transition: var(--transition-fast);
+  position: relative;
+  z-index: 12;
+  pointer-events: auto;
 }
 
 .project-links a.primary-link {
@@ -1206,7 +1213,12 @@ img {
   border-radius: var(--radius-xl);
 }
 
-.cert-card:hover .cert-card-inner,
+@media (hover: hover) {
+  .cert-card:hover .cert-card-inner {
+    transform: rotateY(180deg);
+  }
+}
+
 .cert-card.flipped .cert-card-inner {
   transform: rotateY(180deg);
 }
